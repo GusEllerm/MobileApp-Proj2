@@ -1,14 +1,17 @@
 package com.example.termtwoproject
 
 import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.util.Log
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 
@@ -16,10 +19,9 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.JointType.ROUND
+import java.io.File
 
 class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
@@ -42,15 +44,47 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        // Callback is used for GPS recording, It also superimposes the lines onto the map
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(p0: LocationResult?) {
                 super.onLocationResult(p0)
                 lastLocation = p0!!.lastLocation
-                placeMarkerOnMap(LatLng(lastLocation.latitude, lastLocation.longitude))
+
+//                placeMarkerOnMap(LatLng(lastLocation.latitude, lastLocation.longitude))
+
+                // appending each new point to the file
+                val coordsFileInput = "${lastLocation.latitude},${lastLocation.longitude}\n"
+                Log.i("Appending data to file", "$coordsFileInput added to file")
+                applicationContext.openFileOutput(FILE_NAME, Context.MODE_APPEND).use {
+                    it.write(coordsFileInput.toByteArray())
+                }
+                displayCoords()
+
             }
         }
 
         createLocationRequest()
+    }
+
+    private fun displayCoords() {
+        // Takes each line in file, converts it to a LatLng object and passes it into a list
+        val list: MutableList<LatLng> = ArrayList()
+        File(applicationContext.filesDir, FILE_NAME).forEachLine {
+            val (lat, lng) = it.split(",")
+            val value = LatLng(lat.toDouble(), lng.toDouble())
+            list.add(value)
+        }
+
+        // Set up polyline options
+        val polylineOptions = PolylineOptions()
+            .addAll(list)
+            .geodesic(true)
+            .color(Color.BLUE)
+            .width(30f)
+            .jointType(ROUND)
+
+        // Apply line to map
+        map.addPolyline(polylineOptions)
     }
 
     /**
@@ -87,6 +121,9 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // Stops the location update requests
         super.onPause()
         fusedLocationClient.removeLocationUpdates(locationCallback)
+
+        // Close write stream
+
     }
 
     public override fun onResume() {
@@ -101,6 +138,7 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // companion object used in setUpMap, createLocationRequest, onActivityResult
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val REQUEST_CHECK_SETTINGS = 2
+        private const val FILE_NAME = "test2.txt"
     }
 
     private fun setUpMap() {
@@ -130,6 +168,22 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18f))
             }
         }
+
+        // Creation of file to be used to record long/lat pairs
+        if (!fileExist()) {
+            //If the file does not exist at launch, create it
+            Log.d("File Creation", "$FILE_NAME Created")
+            val file = File(applicationContext.filesDir, FILE_NAME)
+            file.createNewFile()
+        } else {
+            Log.d("File Exists", "File already exists")
+        }
+    }
+
+    private fun fileExist(): Boolean {
+        // Checks if the file has been made previously
+        val file: File = applicationContext.getFileStreamPath(FILE_NAME)
+        return file.exists()
     }
 
     private fun placeMarkerOnMap(location: LatLng) {
@@ -157,7 +211,7 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // Make locationRequest, add it to LocationSettingsRequest.Builder & retrieve and handle changes based of users settings
         locationRequest = LocationRequest()
         // Specifies what rate this app would LIKE to receive updates
-        locationRequest.interval = 2000
+        locationRequest.interval = 500
         // Rate of which the app can handle updates
         locationRequest.fastestInterval = 100
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
