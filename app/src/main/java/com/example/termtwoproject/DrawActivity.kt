@@ -50,8 +50,6 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 super.onLocationResult(p0)
                 lastLocation = p0!!.lastLocation
 
-//                placeMarkerOnMap(LatLng(lastLocation.latitude, lastLocation.longitude))
-
                 // appending each new point to the file
                 val coordsFileInput = "${lastLocation.latitude},${lastLocation.longitude}\n"
                 Log.i("Appending data to file", "$coordsFileInput added to file")
@@ -59,7 +57,6 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     it.write(coordsFileInput.toByteArray())
                 }
                 displayCoords()
-
             }
         }
 
@@ -121,9 +118,6 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // Stops the location update requests
         super.onPause()
         fusedLocationClient.removeLocationUpdates(locationCallback)
-
-        // Close write stream
-
     }
 
     public override fun onResume() {
