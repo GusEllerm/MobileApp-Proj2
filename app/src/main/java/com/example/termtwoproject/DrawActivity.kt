@@ -34,6 +34,8 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var locationRequest: LocationRequest
     private var locationUpdateState = false
 
+    private lateinit var drawingName : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_draw)
@@ -61,6 +63,11 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
 
         createLocationRequest()
+
+        // set drawing name
+        drawingName = intent.getStringExtra("drawingName")
+        println(drawingName)
+
     }
 
     private fun displayCoords() {
@@ -97,6 +104,7 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         map = googleMap
 
         map.uiSettings.isZoomControlsEnabled = true
+
         map.setOnMarkerClickListener(this)
 
         setUpMap()

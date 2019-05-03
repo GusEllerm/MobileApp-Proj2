@@ -24,11 +24,17 @@ class MainActivity : AppCompatActivity() {
         val toDrawActivity: Button = findViewById(R.id.DrawActivityButtom)
         val debugButton: Button = findViewById(R.id.debug)
         val debugDelete: Button = findViewById(R.id.debug_delete)
+
+        val homeButton: Button = findViewById(R.id.homeButton)
+        homeButton.setOnClickListener { startActivity(Intent(this, HomeActivity::class.java))}
+
+
         toDrawActivity.setOnClickListener { startActivity(Intent(this, DrawActivity::class.java)) }
 
         // If you try and print the file when it is deleted the app will crash as a null pointer exception
         debugButton.setOnClickListener { File(applicationContext.filesDir, FILE_NAME).forEachLine { println(it) } }
         debugDelete.setOnClickListener { File(applicationContext.filesDir, FILE_NAME).delete() }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
