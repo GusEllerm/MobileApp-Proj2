@@ -64,10 +64,13 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         createLocationRequest()
 
-        // set drawing name
-        drawingName = intent.getStringExtra("drawingName")
-        println(drawingName)
-
+        // set drawing name. If no extras send to DrawSettingsActivity
+        if (intent.extras == null) {
+            startActivity(Intent(this, DrawSettingsActivity::class.java))
+        } else {
+            drawingName = intent.getStringExtra("drawingName")
+            Log.d("Drawing Name", "$drawingName - Name of drawing")
+        }
     }
 
     private fun displayCoords() {
@@ -102,11 +105,8 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
      */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
         map.uiSettings.isZoomControlsEnabled = true
-
         map.setOnMarkerClickListener(this)
-
         setUpMap()
     }
 

@@ -3,6 +3,7 @@ package com.example.termtwoproject
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -21,10 +22,12 @@ class DrawSettingsActivity : AppCompatActivity() {
 
         val drawingNameField = findViewById<EditText>(R.id.drawingNameField)
 
+
+
         val startDrawingButton = findViewById<Button>(R.id.startDrawingButton)
         startDrawingButton.setOnClickListener {
             val intent = Intent(this, DrawActivity::class.java)
-            intent.putExtra("drawingName", drawingNameField.text)
+            intent.putExtra("drawingName", drawingNameField.text.toString()) // field needs to be a string otherwise it passes null to drawActivity
             startActivity(intent)
         }
     }

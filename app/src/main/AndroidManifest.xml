@@ -34,7 +34,7 @@
                 android:label="@string/title_activity_draw">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.termtwoproject.MainActivity"/>
+                    android:value="com.example.termtwoproject.HomeActivity"/>
         </activity>
         <activity
                 android:name=".MainActivity"
