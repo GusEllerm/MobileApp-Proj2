@@ -34,7 +34,8 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var locationRequest: LocationRequest
     private var locationUpdateState = false
 
-    private lateinit var drawingName : String
+    // TODO Cant have a lateinit variable which is a primitive. Need to fix
+    private var drawingID : Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +69,9 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         if (intent.extras == null) {
             startActivity(Intent(this, DrawSettingsActivity::class.java))
         } else {
-            drawingName = intent.getStringExtra("drawingName")
-            Log.d("Drawing Name", "$drawingName - Name of drawing")
+            //TODO have some sort of error checking for -1 value
+            drawingID = intent.getLongExtra("drawingID", -1)
+            Log.d("Drawing ID", "$drawingID - ID of drawing")
         }
     }
 

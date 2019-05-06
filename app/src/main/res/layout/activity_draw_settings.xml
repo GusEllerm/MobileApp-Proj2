@@ -15,6 +15,9 @@
     <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/mapTypeSpinner"/>
+    <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/lineColorSpinner" android:spinnerMode="dropdown"/>
     <Button
             android:text="@string/start_drawing"
             android:layout_width="match_parent"

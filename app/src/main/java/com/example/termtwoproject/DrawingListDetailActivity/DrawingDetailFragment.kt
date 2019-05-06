@@ -9,9 +9,14 @@ import android.view.ViewGroup
 import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
+import com.example.termtwoproject.Database.DbWorkerThread
 import com.example.termtwoproject.R
 import kotlinx.android.synthetic.main.activity_drawing_detail.*
 import kotlinx.android.synthetic.main.drawing_detail.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
 
 /**
  * A fragment representing a single Drawing detail screen.
@@ -25,14 +30,15 @@ class DrawingDetailFragment : Fragment() {
      * The dummy content this fragment is presenting.
      */
     private var item: Drawing? = null
-
-    // ahha //TODO below I am using !!, this is because I need a non-nullable context type - there needs to be a better way of doing this
-
+    private lateinit var thread: DbWorkerThread
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val database = Room.databaseBuilder(activity!!.applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
+        val database = Room.databaseBuilder(activity!!.applicationContext, DrawingsDatabase::class.java, "drawings").build()
+        val thread = DbWorkerThread("dbWorkerThread")
+        thread.start()
+
 
         arguments?.let {
             if (it.containsKey(ARG_ITEM_ID)) {
@@ -40,16 +46,29 @@ class DrawingDetailFragment : Fragment() {
                 // arguments. In a real-world scenario, use a Loader
                 // to load content from a content provider.
                 Log.d("here", "$it")
-                item = database.drawingDao().getDrawingById(it.getString(ARG_ITEM_ID).toLong())
-                activity?.toolbar_layout?.title = item?.title
+
+                runBlocking {
+                    val job =  launch(Dispatchers.Default) {
+                        item = database.drawingDao().getDrawingById(it.getString(ARG_ITEM_ID).toLong())
+                        activity?.toolbar_layout?.title = item?.title
+                    }
+                }
             }
         }
     }
 
-    override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onResume() {
+        super.onResume()
+        thread = DbWorkerThread("dbWorkerThread")
+        thread.start()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.drawing_detail, container, false)
 
-        // Show the dummy content as text in a TextView.
+        thread = DbWorkerThread("dbWorkerThread")
+        thread.start()
+        // Show the fields of drawing object
         item?.let {
             rootView.drawing_detail.text = "${it.title}, mapType: ${it.mapType}, lineColor: ${it.lineColor}, ID: ${it.id}"
         }

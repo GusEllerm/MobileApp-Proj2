@@ -18,7 +18,7 @@ class HomeActivity : AppCompatActivity() {
 
         val myDrawingsButton = findViewById<Button>(R.id.myDrawingsButton)
 
-        // NOTE: //TODO we need to run all queries on a background thread - I am allowing queries on main thread for testing
+        // To do background threading make a runnable and execute it with the DbWorkerThread class (it dispatches threads)
         val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
 
 

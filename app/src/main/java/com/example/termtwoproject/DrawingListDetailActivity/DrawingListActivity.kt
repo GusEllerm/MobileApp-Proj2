@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.app.NavUtils
 import android.view.MenuItem
 import androidx.room.Room
+import com.example.termtwoproject.Database.DbWorkerThread
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.DrawSettingsActivity
 import com.example.termtwoproject.Database.DrawingsDatabase
@@ -35,6 +36,7 @@ class DrawingListActivity : AppCompatActivity() {
      * device.
      */
     private var twoPane: Boolean = false
+    private lateinit var thread: DbWorkerThread
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,10 @@ class DrawingListActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         toolbar.title = title
+
+        // Multi-Threading
+        thread = DbWorkerThread("dbWorkerThread")
+        thread.start()
 
         // Making a new drawing
         fab.setOnClickListener { startActivity(Intent(applicationContext, DrawSettingsActivity::class.java)) }
@@ -57,8 +63,8 @@ class DrawingListActivity : AppCompatActivity() {
             twoPane = true
         }
 
-        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
-        setupRecyclerView(drawing_list, database)
+        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").build()
+        setupRecyclerView(drawing_list, database, thread)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -76,13 +82,17 @@ class DrawingListActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView, database: DrawingsDatabase) {
-        recyclerView.adapter =
+    private fun setupRecyclerView(recyclerView: RecyclerView, database: DrawingsDatabase, thread: DbWorkerThread) {
+
+        val task = Runnable {
+            recyclerView.adapter =
             SimpleItemRecyclerViewAdapter(
                 this,
                 database.drawingDao().getAll(),
                 twoPane
             )
+        }
+        thread.postTask(task)
     }
 
     class SimpleItemRecyclerViewAdapter(

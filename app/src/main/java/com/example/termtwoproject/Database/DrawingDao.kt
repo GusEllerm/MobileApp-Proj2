@@ -22,4 +22,7 @@ interface DrawingDao {
 
     @Query("SELECT * FROM drawings WHERE id = :id")
     fun getDrawingById(id: Long): Drawing
+
+    @Query("SELECT * FROM drawings WHERE id = (SELECT MAX(id) FROM drawings)")
+    fun getLastDrawing(): Drawing
 }
