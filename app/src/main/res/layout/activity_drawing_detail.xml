@@ -40,6 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    <!--For some reason this line is needed even tho android studio says is an error-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
