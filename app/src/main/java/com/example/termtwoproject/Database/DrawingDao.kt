@@ -1,6 +1,7 @@
-package com.example.termtwoproject
+package com.example.termtwoproject.Database
 
 import androidx.room.*
+import com.example.termtwoproject.Database.Drawing
 
 @Dao
 interface DrawingDao {

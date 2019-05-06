@@ -1,6 +1,5 @@
-package com.example.termtwoproject
+package com.example.termtwoproject.DrawingListDetailActivity
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.room.Room
+import com.example.termtwoproject.Database.Drawing
+import com.example.termtwoproject.Database.DrawingsDatabase
+import com.example.termtwoproject.R
 import kotlinx.android.synthetic.main.activity_drawing_detail.*
 import kotlinx.android.synthetic.main.drawing_detail.view.*
 

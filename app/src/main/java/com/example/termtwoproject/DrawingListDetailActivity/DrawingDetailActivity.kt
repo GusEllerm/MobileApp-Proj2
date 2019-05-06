@@ -1,10 +1,11 @@
-package com.example.termtwoproject
+package com.example.termtwoproject.DrawingListDetailActivity
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
+import com.example.termtwoproject.DrawActivity
+import com.example.termtwoproject.R
 import kotlinx.android.synthetic.main.activity_drawing_detail.*
 
 /**

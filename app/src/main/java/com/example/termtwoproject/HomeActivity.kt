@@ -2,11 +2,11 @@ package com.example.termtwoproject
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
-import android.widget.EditText
 import androidx.room.Room
+import com.example.termtwoproject.Database.DrawingsDatabase
+import com.example.termtwoproject.DrawingListDetailActivity.DrawingListActivity
 
 
 class HomeActivity : AppCompatActivity() {

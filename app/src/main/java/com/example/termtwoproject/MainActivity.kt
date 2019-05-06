@@ -2,14 +2,14 @@ package com.example.termtwoproject
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.room.Room
+import com.example.termtwoproject.Database.Drawing
+import com.example.termtwoproject.Database.DrawingsDatabase
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -37,7 +37,14 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Database cleared", Toast.LENGTH_LONG).show()}
         addData.setOnClickListener {
             val rnds = (0..10).random()
-            database.drawingDao().insert(Drawing(title = "Test$rnds", fragmentAmount = 0, lineColor = "Red", mapType = "testmaptype"))
+            database.drawingDao().insert(
+                Drawing(
+                    title = "Test$rnds",
+                    fragmentAmount = 0,
+                    lineColor = "Red",
+                    mapType = "testmaptype"
+                )
+            )
             Toast.makeText(this, "item added", Toast.LENGTH_LONG).show()
         }
 

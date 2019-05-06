@@ -1,19 +1,20 @@
-package com.example.termtwoproject
+package com.example.termtwoproject.DrawingListDetailActivity
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.app.NavUtils
-import androidx.appcompat.app.ActionBar
 import android.view.MenuItem
-import androidx.room.Database
 import androidx.room.Room
+import com.example.termtwoproject.Database.Drawing
+import com.example.termtwoproject.DrawSettingsActivity
+import com.example.termtwoproject.Database.DrawingsDatabase
+import com.example.termtwoproject.R
 
 import kotlinx.android.synthetic.main.activity_drawing_list.*
 import kotlinx.android.synthetic.main.drawing_list_content.view.*
@@ -76,7 +77,12 @@ class DrawingListActivity : AppCompatActivity() {
         }
 
     private fun setupRecyclerView(recyclerView: RecyclerView, database: DrawingsDatabase) {
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(this, database.drawingDao().getAll(), twoPane)
+        recyclerView.adapter =
+            SimpleItemRecyclerViewAdapter(
+                this,
+                database.drawingDao().getAll(),
+                twoPane
+            )
     }
 
     class SimpleItemRecyclerViewAdapter(
