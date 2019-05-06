@@ -22,8 +22,6 @@ class DrawSettingsActivity : AppCompatActivity() {
 
         val drawingNameField = findViewById<EditText>(R.id.drawingNameField)
 
-
-
         val startDrawingButton = findViewById<Button>(R.id.startDrawingButton)
         startDrawingButton.setOnClickListener {
             val intent = Intent(this, DrawActivity::class.java)

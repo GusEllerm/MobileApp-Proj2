@@ -2,6 +2,7 @@ package com.example.termtwoproject
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
@@ -16,16 +17,15 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         val myDrawingsButton = findViewById<Button>(R.id.myDrawingsButton)
-//        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").build()
-//        val addData = findViewById<Button>(R.id.dummy_data)
-//
-//        var drawing = Drawing()
 
-//        addData.setOnClickListener { //TODO }
+        // NOTE: //TODO we need to run all queries on a background thread - I am allowing queries on main thread for testing
+        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
+
 
         myDrawingsButton.setOnClickListener {
-            val intent = Intent(this, DrawSettingsActivity::class.java)
+            val intent = Intent(this, DrawingListActivity::class.java)
             startActivity(intent)
         }
+
     }
 }

@@ -11,4 +11,6 @@
     <string name="line_colour">Line colour</string>
     <string name="map_type">Map type</string>
     <string name="start_drawing">Start Drawing</string>
+    <string name="title_drawing_list">Drawings</string>
+    <string name="title_drawing_detail">Drawing Detail</string>
 </resources>

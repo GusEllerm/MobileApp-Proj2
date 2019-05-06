@@ -16,7 +16,24 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-
+        <activity
+                android:name=".DrawingListActivity"
+                android:label="@string/title_drawing_list"
+                android:parentActivityName=".HomeActivity"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.example.termtwoproject.HomeActivity"/>
+        </activity>
+        <activity
+                android:name=".DrawingDetailActivity"
+                android:label="@string/title_drawing_detail"
+                android:parentActivityName=".DrawingListActivity"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.example.termtwoproject.DrawingListActivity"/>
+        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -49,14 +66,16 @@
         <activity
                 android:name=".HomeActivity"
                 android:label="@string/home_title">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                   android:value=".MainActivity"></meta-data>
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".MainActivity"/>
         </activity>
         <activity
                 android:name=".DrawSettingsActivity"
                 android:label="@string/home_title">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                       android:value=".DrawSettingsActivity"></meta-data>
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".DrawSettingsActivity"/>
         </activity>
     </application>
 
