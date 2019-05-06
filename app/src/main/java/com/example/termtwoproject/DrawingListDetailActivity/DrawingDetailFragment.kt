@@ -11,6 +11,11 @@ import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
 import com.example.termtwoproject.Database.DbWorkerThread
 import com.example.termtwoproject.R
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_drawing_detail.*
 import kotlinx.android.synthetic.main.drawing_detail.view.*
 import kotlinx.coroutines.Dispatchers
@@ -24,16 +29,18 @@ import kotlinx.coroutines.runBlocking
  * in two-pane mode (on tablets) or a [DrawingDetailActivity]
  * on handsets.
  */
-class DrawingDetailFragment : Fragment() {
+class DrawingDetailFragment : Fragment(), OnMapReadyCallback {
 
     /**
      * The dummy content this fragment is presenting.
      */
     private var item: Drawing? = null
     private lateinit var thread: DbWorkerThread
+    private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         val database = Room.databaseBuilder(activity!!.applicationContext, DrawingsDatabase::class.java, "drawings").build()
         val thread = DbWorkerThread("dbWorkerThread")
@@ -63,15 +70,26 @@ class DrawingDetailFragment : Fragment() {
         thread.start()
     }
 
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        // Add a marker in Sydney and move the camera
+        val sydney = LatLng(-34.0, 151.0)
+        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.drawing_detail, container, false)
 
         thread = DbWorkerThread("dbWorkerThread")
         thread.start()
+
+
         // Show the fields of drawing object
-        item?.let {
-            rootView.drawing_detail.text = "${it.title}, mapType: ${it.mapType}, lineColor: ${it.lineColor}, ID: ${it.id}"
-        }
+//        item?.let {
+//            rootView.drawing_detail.text = "${it.title}, mapType: ${it.mapType}, lineColor: ${it.lineColor}, ID: ${it.id}"
+//        }
 
         return rootView
     }
