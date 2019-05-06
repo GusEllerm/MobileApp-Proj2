@@ -12,6 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import android.util.Log
+import androidx.room.Room
+import com.example.termtwoproject.Database.DbWorkerThread
+import com.example.termtwoproject.Database.Drawing
+import com.example.termtwoproject.Database.DrawingsDatabase
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 
@@ -21,6 +25,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.maps.model.JointType.ROUND
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -37,6 +43,9 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     // TODO Cant have a lateinit variable which is a primitive. Need to fix
     private var drawingID : Long = -1
 
+    // Drawing object
+    private lateinit var drawing: Drawing
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_draw)
@@ -44,6 +53,9 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        // Start database (now done in on map ready)
+//        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").build()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -56,7 +68,7 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 // appending each new point to the file
                 val coordsFileInput = "${lastLocation.latitude},${lastLocation.longitude}\n"
                 Log.i("Appending data to file", "$coordsFileInput added to file")
-                applicationContext.openFileOutput(FILE_NAME, Context.MODE_APPEND).use {
+                applicationContext.openFileOutput(drawing.title, Context.MODE_APPEND).use {
                     it.write(coordsFileInput.toByteArray())
                 }
                 displayCoords()
@@ -65,20 +77,30 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         createLocationRequest()
 
-        // set drawing name. If no extras send to DrawSettingsActivity
+        // set drawing id. If no extras send to DrawSettingsActivity
         if (intent.extras == null) {
             startActivity(Intent(this, DrawSettingsActivity::class.java))
         } else {
             //TODO have some sort of error checking for -1 value
             drawingID = intent.getLongExtra("drawingID", -1)
             Log.d("Drawing ID", "$drawingID - ID of drawing")
+
         }
+    }
+
+    private fun getDrawing(database: DrawingsDatabase) {
+        //TODO - I am cheating here, the database calls are happining on the main thread - this needs to be fixed
+        drawing = database.drawingDao().getDrawingById(drawingID)
+        Log.d("Drawing Loaded", "${drawing.title} has been successfully retrieved")
+
+        // Everything is ready to set map up
+        setUpMap()
     }
 
     private fun displayCoords() {
         // Takes each line in file, converts it to a LatLng object and passes it into a list
         val list: MutableList<LatLng> = ArrayList()
-        File(applicationContext.filesDir, FILE_NAME).forEachLine {
+        File(applicationContext.filesDir, drawing.title).forEachLine {
             val (lat, lng) = it.split(",")
             val value = LatLng(lat.toDouble(), lng.toDouble())
             list.add(value)
@@ -109,7 +131,8 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         map = googleMap
         map.uiSettings.isZoomControlsEnabled = true
         map.setOnMarkerClickListener(this)
-        setUpMap()
+        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
+        getDrawing(database)
     }
 
     override fun onMarkerClick(p0: Marker?) = false
@@ -142,7 +165,7 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // companion object used in setUpMap, createLocationRequest, onActivityResult
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val REQUEST_CHECK_SETTINGS = 2
-        private const val FILE_NAME = "test2.txt"
+//        private const val FILE_NAME = "test2.txt"
     }
 
     private fun setUpMap() {
@@ -176,8 +199,8 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // Creation of file to be used to record long/lat pairs
         if (!fileExist()) {
             //If the file does not exist at launch, create it
-            Log.d("File Creation", "$FILE_NAME Created")
-            val file = File(applicationContext.filesDir, FILE_NAME)
+            Log.d("File Creation", "${drawing.title} Created")
+            val file = File(applicationContext.filesDir, drawing.title)
             file.createNewFile()
         } else {
             Log.d("File Exists", "File already exists")
@@ -186,7 +209,7 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun fileExist(): Boolean {
         // Checks if the file has been made previously
-        val file: File = applicationContext.getFileStreamPath(FILE_NAME)
+        val file: File = applicationContext.getFileStreamPath(drawing.title)
         return file.exists()
     }
 
