@@ -131,6 +131,8 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         map = googleMap
         map.uiSettings.isZoomControlsEnabled = true
         map.setOnMarkerClickListener(this)
+
+        // TODO - this is running on the main thread which makes it blocking! needs to be run on a different thread
         val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
         getDrawing(database)
     }
