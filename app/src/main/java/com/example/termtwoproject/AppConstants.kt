@@ -1,6 +1,6 @@
 package com.example.termtwoproject
 
-import com.google.android.gms.maps.GoogleMap
+
 
 object AppConstants {
 
@@ -9,6 +9,5 @@ object AppConstants {
 
 
     val MAP_TYPES = listOf("Normal", "Satellite", "Hybrid", "Terrain")
-
 
 }

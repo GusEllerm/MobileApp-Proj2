@@ -1,6 +1,7 @@
 package com.example.termtwoproject
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
@@ -10,9 +11,11 @@ import android.widget.Toast
 import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
+import com.example.termtwoproject.models.GpsMap
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import java.net.URL
 
 // Main activity - has navigation to DrawActivity, Gallery
 class MainActivity : AppCompatActivity() {
@@ -28,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         val debugDelete: Button = findViewById(R.id.debug_delete)
         val deleteAll: Button = findViewById(R.id.deleteData)
         var addData: Button = findViewById(R.id.addData)
+        val getOnlineMapsButton : Button = findViewById(R.id.getOnlineMapsButton)
 
         // NOTE: //TODO we need to run all queries on a background thread - I am allowing queries on main thread for testing
         val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
@@ -59,6 +63,15 @@ class MainActivity : AppCompatActivity() {
         debugDelete.setOnClickListener { File(applicationContext.filesDir, FILE_NAME).delete() }
 
 
+        getOnlineMapsButton.setOnClickListener {
+            // Only works locally atm
+            val url = URL("http://192.168.1.100:4567/api/gps_map?id=5")
+            MapDownloader {
+                it.forEach {
+                    println("test")
+                }
+            }.execute(url)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
