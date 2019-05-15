@@ -18,12 +18,20 @@ class HomeActivity : AppCompatActivity() {
 
         val myDrawingsButton = findViewById<Button>(R.id.myDrawingsButton)
 
+        val globalDrawingsButton = findViewById<Button>(R.id.globalDrawingsButton)
+
+
         // To do background threading make a runnable and execute it with the DbWorkerThread class (it dispatches threads)
         val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
 
 
         myDrawingsButton.setOnClickListener {
             val intent = Intent(this, DrawingListActivity::class.java)
+            startActivity(intent)
+        }
+
+        globalDrawingsButton.setOnClickListener {
+            val intent = Intent(this, GlobalDrawingsActivity::class.java)
             startActivity(intent)
         }
 

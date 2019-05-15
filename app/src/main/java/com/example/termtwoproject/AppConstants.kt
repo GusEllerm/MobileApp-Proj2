@@ -10,4 +10,14 @@ object AppConstants {
 
     val MAP_TYPES = listOf("Normal", "Satellite", "Hybrid", "Terrain")
 
+    val ORDER_TYPES = mapOf("Most recent" to "newest", "Least recent" to "oldest", "Most votes" to "most_votes", "Least votes" to "least_votes")
+
+    val CATEGORIES = mapOf("Any" to "")
+
+
+    private const val END_POINT = "http://192.168.1.100:4567/api"
+
+    const val GPS_END = "$END_POINT/gps_map"
+
+    const val GPS_LIST_END = "$GPS_END/list"
 }

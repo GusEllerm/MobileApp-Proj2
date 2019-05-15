@@ -61,10 +61,19 @@
             android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintVertical_bias="0.241"/>
     <Button
-            android:text="Print Online Maps"
+            android:text="Get Maps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/getOnlineMapsButton" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="48dp" android:layout_marginTop="24dp"
             app:layout_constraintTop_toBottomOf="@+id/debug"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/mapIdText"
+            app:layout_constraintStart_toEndOf="@+id/getOnlineMapsButton" android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="@+id/getOnlineMapsButton"
+            android:hint="Id of map to get"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

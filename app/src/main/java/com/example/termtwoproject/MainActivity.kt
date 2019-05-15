@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
@@ -15,6 +16,7 @@ import com.example.termtwoproject.models.GpsMap
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import java.lang.NumberFormatException
 import java.net.URL
 
 // Main activity - has navigation to DrawActivity, Gallery
@@ -55,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         val homeButton: Button = findViewById(R.id.homeButton)
         homeButton.setOnClickListener { startActivity(Intent(this, HomeActivity::class.java))}
 
+        val mapIdText : EditText = findViewById(R.id.mapIdText)
 
         toDrawActivity.setOnClickListener { startActivity(Intent(this, DrawActivity::class.java)) }
 
@@ -65,12 +68,16 @@ class MainActivity : AppCompatActivity() {
 
         getOnlineMapsButton.setOnClickListener {
             // Only works locally atm
-            val url = URL("http://192.168.1.100:4567/api/gps_map?id=5")
-            MapDownloader {
-                it.forEach {
-                    println("test")
-                }
-            }.execute(url)
+            var mapId : Int = -1
+            try {
+                mapId = Integer.parseInt(mapIdText.text.toString())
+            } catch (e: NumberFormatException) {
+                // can't parse keep it empty
+            }
+            var query = ""
+            if (mapId > 0) query = "?id=$mapId"
+            val url = URL(AppConstants.GPS_END + query)
+
         }
     }
 
