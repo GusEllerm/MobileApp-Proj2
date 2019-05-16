@@ -8,4 +8,6 @@ import com.example.termtwoproject.Database.DrawingDao
 @Database(entities = [Drawing::class], version = 1)
 abstract class DrawingsDatabase: RoomDatabase() {
     abstract fun drawingDao(): DrawingDao
+
+    //abstract fun votedMapDao(): VotedMapDao
 }

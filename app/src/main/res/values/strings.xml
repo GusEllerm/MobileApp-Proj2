@@ -15,4 +15,6 @@
     <string name="title_drawing_detail">Drawing Detail</string>
     <string name="title_activity_global_drawings">Global Drawings</string>
     <string name="global_drawings">Global drawings</string>
+    <string name="add_vote">Vote</string>
+    <string name="remove_vote">Undo Vote</string>
 </resources>

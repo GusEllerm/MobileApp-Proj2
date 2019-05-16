@@ -3,13 +3,14 @@ package com.example.termtwoproject
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.example.termtwoproject.models.GpsMap
+import com.example.termtwoproject.models.PostModel
 import java.net.URL
 
 class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapViewHolder>() {
 
-    var maps = mutableListOf<GpsMap>()
     var mapIds = mutableListOf<Int>()
 
     override fun getItemCount(): Int = mapIds.size
@@ -18,10 +19,14 @@ class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapVi
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.row_drawing, parent, false)
         val holder = GpsMapViewHolder(view)
-        view.setOnClickListener {
-            //val intent = Intent(context, newclass)
-            //intent.putextra
-            //startactivity
+        val voteButton = view.findViewById<Button>(R.id.voteButton)
+        voteButton.setOnClickListener {
+            val id = mapIds[holder.adapterPosition]
+            val url = URL(AppConstants.GPS_VOTE_END + "?id=" + id)
+            val model = PostModel(url, null, true, "POST")
+            MapUploader {
+                notifyItemChanged(holder.adapterPosition)
+            }.execute(model)
         }
         return holder
     }

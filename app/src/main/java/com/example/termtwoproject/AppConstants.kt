@@ -20,4 +20,6 @@ object AppConstants {
     const val GPS_END = "$END_POINT/gps_map"
 
     const val GPS_LIST_END = "$GPS_END/list"
+
+    const val GPS_VOTE_END = "$GPS_END/vote"
 }
