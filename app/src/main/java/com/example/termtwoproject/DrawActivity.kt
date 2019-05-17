@@ -54,9 +54,6 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Start database (now done in on map ready)
-//        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").build()
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Callback is used for GPS recording, It also superimposes the lines onto the map
@@ -71,21 +68,12 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 applicationContext.openFileOutput(drawing.title, Context.MODE_APPEND).use {
                     it.write(coordsFileInput.toByteArray())
                 }
-                displayCoords()
+                val current_file = File(applicationContext.filesDir, drawing.title)
+                displayCoords(current_file)
             }
         }
 
         createLocationRequest()
-
-        // set drawing id. If no extras send to DrawSettingsActivity
-        if (intent.extras == null) {
-            startActivity(Intent(this, DrawSettingsActivity::class.java))
-        } else {
-            //TODO have some sort of error checking for -1 value
-            drawingID = intent.getLongExtra("drawingID", -1)
-            Log.d("Drawing ID", "$drawingID - ID of drawing")
-
-        }
     }
 
     private fun getDrawing(database: DrawingsDatabase) {
@@ -97,10 +85,10 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         setUpMap()
     }
 
-    private fun displayCoords() {
+    private fun displayCoords(currentFile: File) {
         // Takes each line in file, converts it to a LatLng object and passes it into a list
         val list: MutableList<LatLng> = ArrayList()
-        File(applicationContext.filesDir, drawing.title).forEachLine {
+        currentFile.forEachLine {
             val (lat, lng) = it.split(",")
             val value = LatLng(lat.toDouble(), lng.toDouble())
             list.add(value)
@@ -132,13 +120,21 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         map.uiSettings.isZoomControlsEnabled = true
         map.setOnMarkerClickListener(this)
 
+        // set drawing id. If no extras send to DrawSettingsActivity
+        if (intent.extras == null) {
+            startActivity(Intent(this, DrawSettingsActivity::class.java))
+        } else {
+            //TODO have some sort of error checking for -1 value
+            drawingID = intent.getLongExtra("drawingID", -1)
+            Log.d("Drawing ID", "$drawingID - ID of drawing")
+        }
+
         // TODO - this is running on the main thread which makes it blocking! needs to be run on a different thread
         val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
         getDrawing(database)
     }
 
     override fun onMarkerClick(p0: Marker?) = false
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         // This function executes if it recieves a RESULT_OK for a REQUEST_CHECK_SETTINGS request from createLocationRequest

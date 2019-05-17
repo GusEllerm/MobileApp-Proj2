@@ -50,7 +50,7 @@ class DrawingListActivity : AppCompatActivity() {
         thread.start()
 
         // Making a new drawing
-        fab.setOnClickListener { startActivity(Intent(applicationContext, DrawSettingsActivity::class.java)) }
+        toDrawing.setOnClickListener { startActivity(Intent(applicationContext, DrawSettingsActivity::class.java)) }
 
         // Show the Up button in the action bar.
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -63,7 +63,11 @@ class DrawingListActivity : AppCompatActivity() {
             twoPane = true
         }
 
-        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").build()
+        // .fallbackToDestructiveMigration() -> allow room database to delete eveything on databse reconfigeration
+        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings")
+            .fallbackToDestructiveMigration()
+            .build()
+
         setupRecyclerView(drawing_list, database, thread)
     }
 

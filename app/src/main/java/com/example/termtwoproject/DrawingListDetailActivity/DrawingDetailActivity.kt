@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
+import androidx.room.Room
+import com.example.termtwoproject.Database.DbWorkerThread
+import com.example.termtwoproject.Database.DrawingsDatabase
 import com.example.termtwoproject.DrawActivity
 import com.example.termtwoproject.R
 import kotlinx.android.synthetic.main.activity_drawing_detail.*
@@ -16,14 +19,33 @@ import kotlinx.android.synthetic.main.activity_drawing_detail.*
  */
 class DrawingDetailActivity : AppCompatActivity() {
 
+    lateinit var thread: DbWorkerThread
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawing_detail)
         setSupportActionBar(detail_toolbar)
 
-        fab.setOnClickListener {
-            val intent = Intent(this, DrawActivity::class.java)
+        // MultiThreading
+        thread = DbWorkerThread("dbWorkerThread")
+        thread.start()
 
+        // Database Access
+        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings")
+            .fallbackToDestructiveMigration()
+            .build()
+
+        // Start correct drawing
+        toDrawing.setOnClickListener {
+            val id = intent.getStringExtra(DrawingDetailFragment.ARG_ITEM_ID)
+            val task = Runnable {
+                database.drawingDao().getDrawingById(id.toLong())
+                val intent = Intent(this, DrawActivity::class.java)
+                intent.putExtra("drawingID", id.toLong())
+                startActivity(intent)
+            }
+
+            thread.postTask(task)
             //TODO value needs to be the name of the selected drawing - that way we know what drawing we are editing
             intent.putExtra("drawingName", "test")
             startActivity(intent)

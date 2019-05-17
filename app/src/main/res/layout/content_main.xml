@@ -14,66 +14,50 @@
             android:layout_height="107dp"
             android:id="@+id/DrawActivityButtom"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="72dp"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintTop_toBottomOf="@+id/debug"/>
-    <Button
-            android:text="print file to console"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/debug" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="40dp"
-            android:layout_marginTop="64dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/DrawActivityButtom"
-            app:layout_constraintEnd_toStartOf="@+id/debug_delete" android:layout_marginEnd="8dp"
-            app:layout_constraintHorizontal_bias="0.5"/>
-    <Button
-            android:text="delete file"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/debug_delete" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toEndOf="@+id/debug" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintTop_toTopOf="@+id/debug" app:layout_constraintBottom_toBottomOf="@+id/debug"/>
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/addData"/>
     <Button
             android:text="To starting activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/homeButton" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/debug" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+            android:id="@+id/homeButton"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/mapIdText"/>
     <Button
             android:text="Add dummy data to database"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/addData" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="80dp"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/DrawActivityButtom"
-            app:layout_constraintVertical_bias="0.132" android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.037"/>
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.037"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/deleteData"/>
     <Button
             android:text="Delete all data from database"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/deleteData" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/addData" android:layout_marginBottom="8dp"
+            android:id="@+id/deleteData"
+            android:layout_marginBottom="36dp"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintVertical_bias="0.241"/>
+            android:layout_marginStart="8dp"
+            app:layout_constraintHorizontal_bias="0.514"/>
     <Button
             android:text="Get Maps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/getOnlineMapsButton" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="48dp" android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@+id/debug"/>
+            android:id="@+id/getOnlineMapsButton"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/DrawActivityButtom"
+            tools:layout_editor_absoluteX="8dp"/>
     <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
             android:id="@+id/mapIdText"
+            android:hint="Id of map to get"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/DrawActivityButtom"
             app:layout_constraintStart_toEndOf="@+id/getOnlineMapsButton" android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="@+id/getOnlineMapsButton"
-            android:hint="Id of map to get"/>
+            android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

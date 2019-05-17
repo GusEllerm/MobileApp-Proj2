@@ -86,11 +86,6 @@ class DrawingDetailFragment : Fragment(), OnMapReadyCallback {
         thread.start()
 
 
-        // Show the fields of drawing object
-//        item?.let {
-//            rootView.drawing_detail.text = "${it.title}, mapType: ${it.mapType}, lineColor: ${it.lineColor}, ID: ${it.id}"
-//        }
-
         return rootView
     }
 
