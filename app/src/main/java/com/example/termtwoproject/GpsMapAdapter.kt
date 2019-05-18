@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
-import com.example.termtwoproject.models.GpsMap
 import com.example.termtwoproject.models.PostModel
 import java.net.URL
 
@@ -24,7 +23,7 @@ class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapVi
             val id = mapIds[holder.adapterPosition]
             val url = URL(AppConstants.GPS_VOTE_END + "?id=" + id)
             val model = PostModel(url, null, true, "POST")
-            MapUploader {
+            MapApiHandler {
                 notifyItemChanged(holder.adapterPosition)
             }.execute(model)
         }

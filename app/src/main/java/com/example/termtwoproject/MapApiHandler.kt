@@ -10,7 +10,7 @@ import java.net.URL
 import java.nio.charset.Charset
 
 
-class MapUploader(val callback : (Int) -> Unit): AsyncTask<PostModel, Void, Int>() {
+class MapApiHandler(val callback : (Int) -> Unit): AsyncTask<PostModel, Void, Int>() {
 
     override fun doInBackground(vararg model : PostModel): Int {
         val m = model.first()
@@ -20,6 +20,7 @@ class MapUploader(val callback : (Int) -> Unit): AsyncTask<PostModel, Void, Int>
             println(result)
         } else {
             // method is for saving or updating a gps map
+            postOrPatchMap(m)
         }
         return 1
     }
@@ -37,6 +38,13 @@ class MapUploader(val callback : (Int) -> Unit): AsyncTask<PostModel, Void, Int>
             val json = BufferedInputStream(inputStream).readBytes().toString(Charset.defaultCharset())
             return JSONObject(json)
         }
+    }
 
+    private fun postOrPatchMap(model : PostModel) : JSONObject {
+        with(model.url.openConnection() as HttpURLConnection) {
+            requestMethod = model.method
+            setRequestProperty("Content-Type", "application/json")
+
+        }
     }
 }
