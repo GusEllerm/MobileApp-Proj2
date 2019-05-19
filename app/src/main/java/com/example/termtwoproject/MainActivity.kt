@@ -13,6 +13,7 @@ import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
 import com.example.termtwoproject.models.GpsMap
+import com.example.termtwoproject.models.PostModel
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -59,23 +60,21 @@ class MainActivity : AppCompatActivity() {
         val homeButton: Button = findViewById(R.id.homeButton)
         homeButton.setOnClickListener { startActivity(Intent(this, HomeActivity::class.java))}
 
-        val mapIdText : EditText = findViewById(R.id.mapIdText)
 
         toDrawActivity.setOnClickListener { startActivity(Intent(this, DrawActivity::class.java)) }
 
 
 
         getOnlineMapsButton.setOnClickListener {
-            // Only works locally atm
-            var mapId : Int = -1
-            try {
-                mapId = Integer.parseInt(mapIdText.text.toString())
-            } catch (e: NumberFormatException) {
-                // can't parse keep it empty
-            }
-            var query = ""
-            if (mapId > 0) query = "?id=$mapId"
-            val url = URL(AppConstants.GPS_END + query)
+            val id = 2
+            MapDownloader {
+                val url = URL("http://192.168.1.100:4567/api/gps_map")
+                val model = PostModel(url, it, false, "POST")
+                MapApiHandler {
+
+                }.execute(model)
+            }.execute(URL("http://192.168.1.100:4567/api/gps_map?id=$id"))
+
 
         }
     }
