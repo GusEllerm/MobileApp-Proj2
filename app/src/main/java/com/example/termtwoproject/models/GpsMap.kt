@@ -13,7 +13,7 @@ data class GpsMap(val id : Int, val title : String, val type : String, val fragm
     fun toJSON() : JSONObject {
         val rootObject = JSONObject()
         rootObject.put("id", id)
-        rootObject.put("title", title)
+        rootObject.put("mapTitle", title)
         rootObject.put("mapType", type)
         rootObject.put("fragmentAmount", fragmentAmount)
         rootObject.put("category", category)
