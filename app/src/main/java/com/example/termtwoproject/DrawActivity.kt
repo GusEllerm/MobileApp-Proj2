@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
@@ -60,6 +61,9 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     // Drawing object
     private lateinit var drawing: Drawing
 
+    // Start/Stop recording button
+    private lateinit var startRecordingButton: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_draw)
@@ -70,11 +74,17 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
         recordLocation = false
 
-        val fab: View = findViewById(R.id.StartRecording)
-        fab.setOnClickListener { view ->
+        startRecordingButton = findViewById(R.id.StartRecording)
+        startRecordingButton.setOnClickListener { view ->
             when (recordLocation) {
-                true -> recordLocation = false
-                false -> recordLocation = true
+                true -> {
+                    recordLocation = false
+                    startRecordingButton.text = resources.getString(R.string.drawing_activity_buttonStateFalse)
+                }
+                false -> {
+                    recordLocation = true
+                    startRecordingButton.text = resources.getString(R.string.drawing_activity_buttonStateTrue)
+                }
             }
 
             Snackbar.make(view, "This happened", Snackbar.LENGTH_SHORT)
@@ -85,19 +95,48 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     }
 
-    override fun deleteFragment() {
-        Toast.makeText(this, "Delete x fragment", Toast.LENGTH_SHORT).show()
+    private fun stopRecording() {
+        if (recordLocation) {
+            // If recording stop
+            startRecordingButton.performClick()
+            Toast.makeText(this, "Recording Stopped", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun deleteFragment(fragNumber: String) {
+        stopRecording()
+//        val fragNum = fragNumber.takeLast(1).toInt()
+//        val fileToDelete = File("${applicationContext.filesDir}$currentFragmentPath", "$fragNum.txt")
+//
+//        try {
+//            fileToDelete.delete()
+//        } catch (e: Exception) {
+//            //TODO - what if the file cant be deleted?
+//        }
+
+
+//        Toast.makeText(this, "$fragNum was selected", Toast.LENGTH_SHORT).show()
     }
 
     override fun viewFragment() {
+        stopRecording()
         Toast.makeText(this, "View x fragments", Toast.LENGTH_SHORT).show()
     }
 
     override fun newFragment() {
-        Toast.makeText(this, "Make New Fragment", Toast.LENGTH_SHORT).show()
+        stopRecording()
+
+        // makeFileStructure should create a new fragment, as the directory must already exist
+        try {
+            makeFileStructure()
+        } finally {
+            val currentFrags = getFragmentNames()
+            Toast.makeText(this, "Line ${currentFrags[currentFrags.lastIndex].toInt() + 1} has been created", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun editFragment() {
+        stopRecording()
         Toast.makeText(this, "Edit selected Fragment", Toast.LENGTH_SHORT).show()
     }
 

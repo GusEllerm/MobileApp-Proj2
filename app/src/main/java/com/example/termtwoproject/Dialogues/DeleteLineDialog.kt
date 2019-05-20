@@ -17,6 +17,7 @@ import java.lang.ClassCastException
 class DeleteLineDialog: AppCompatDialogFragment() {
 
     lateinit var dialogListner: DeleteLineDialogListner
+    lateinit var deleteFragment: String
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
@@ -33,6 +34,16 @@ class DeleteLineDialog: AppCompatDialogFragment() {
             delete_radio_group?.addView(radioButton)
         }
 
+        delete_radio_group?.setOnCheckedChangeListener(object: RadioGroup.OnCheckedChangeListener {
+            override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+                //TODO - forcing a nullable type here, unsafe
+                val radioButtonId = group!!.checkedRadioButtonId
+                val selectedRadioBtn = group.findViewById<RadioButton>(radioButtonId)
+                deleteFragment = selectedRadioBtn.text.toString()
+            }
+        })
+
+
         builder.setView(view)
             .setTitle("Delete Line")
             .setNegativeButton("cancel", object: DialogInterface.OnClickListener {
@@ -42,7 +53,7 @@ class DeleteLineDialog: AppCompatDialogFragment() {
             })
             .setPositiveButton("Delete", object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    dialogListner.deleteFragment()
+                    dialogListner.deleteFragment(deleteFragment)
                 }
             })
         return builder.create()
@@ -60,6 +71,6 @@ class DeleteLineDialog: AppCompatDialogFragment() {
     }
 
     interface DeleteLineDialogListner {
-        fun deleteFragment()
+        fun deleteFragment(deleteFragment: String)
     }
 }

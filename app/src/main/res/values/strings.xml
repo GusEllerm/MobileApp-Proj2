@@ -28,4 +28,6 @@
     <string name="menu_item_edit">Edit</string>
     <string name="menu_item_delete">Delete</string>
     <string name="menu_item_view">View</string>
+    <string name="drawing_activity_buttonStateTrue">STOP RECORDING</string>
+    <string name="drawing_activity_buttonStateFalse">EXTEND CURRENT LINE</string>
 </resources>

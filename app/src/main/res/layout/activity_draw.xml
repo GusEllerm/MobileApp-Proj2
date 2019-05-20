@@ -6,6 +6,14 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent">
 
+    <Button
+            android:text="Extend current line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/StartRecording" app:layout_constraintStart_toEndOf="@+id/map"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/map"
+            android:layout_marginBottom="32dp" app:layout_constraintBottom_toBottomOf="@+id/map"
+            android:shadowColor="#4CAF50" android:outlineSpotShadowColor="#4CAF50"/>
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -16,14 +24,4 @@
               android:name="com.google.android.gms.maps.SupportMapFragment" tools:layout_editor_absoluteY="332dp"
               tools:layout_editor_absoluteX="-16dp"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="58dp"
-                                                                           android:layout_height="56dp"
-                                                                           android:src="@android:drawable/ic_media_play"
-                                                                           android:id="@+id/StartRecording"
-                                                                           app:backgroundTint="#4CAF50"
-                                                                           app:layout_constraintBottom_toBottomOf="parent"
-                                                                           android:layout_marginBottom="48dp"
-                                                                           app:layout_constraintStart_toEndOf="@+id/map"
-                                                                           app:layout_constraintHorizontal_bias="0.5"
-                                                                           app:layout_constraintEnd_toStartOf="@+id/map"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

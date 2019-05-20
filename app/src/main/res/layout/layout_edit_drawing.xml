@@ -5,7 +5,7 @@
               android:layout_height="match_parent">
 
     <TextView
-            android:text="Which line do you want to edit?"
+            android:text="Which line do you want to extend?"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/textView" android:layout_gravity="center"
             android:gravity="center" android:foregroundGravity="center"/>
