@@ -1,7 +1,5 @@
 package com.example.termtwoproject
 
-import android.app.ActivityManager
-import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -12,10 +10,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.room.Room
-import com.example.termtwoproject.Database.DbWorkerThread
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
+import com.example.termtwoproject.Dialogues.CreateNewLineDialog
+import com.example.termtwoproject.Dialogues.DeleteLineDialog
+import com.example.termtwoproject.Dialogues.EditLineDialog
+import com.example.termtwoproject.Dialogues.ViewLineDialog
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 
@@ -25,11 +31,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.maps.model.JointType.ROUND
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import com.google.android.material.snackbar.Snackbar
+import org.apache.commons.io.FilenameUtils
 import java.io.File
+import java.io.FileOutputStream
+import java.util.Collections.max
 
-class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+
+class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, CreateNewLineDialog.NewLineDialogListner,
+EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, DeleteLineDialog.DeleteLineDialogListner {
 
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -40,8 +50,12 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var locationRequest: LocationRequest
     private var locationUpdateState = false
 
+
     // TODO Cant have a lateinit variable which is a primitive. Need to fix
     private var drawingID : Long = -1
+
+    private lateinit var currentFragmentPath: String
+    private lateinit var currentFragment: String
 
     // Drawing object
     private lateinit var drawing: Drawing
@@ -54,67 +68,97 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        recordLocation = false
+
+        val fab: View = findViewById(R.id.StartRecording)
+        fab.setOnClickListener { view ->
+            when (recordLocation) {
+                true -> recordLocation = false
+                false -> recordLocation = true
+            }
+
+            Snackbar.make(view, "This happened", Snackbar.LENGTH_SHORT)
+                .setAction("Action", null)
+                .show()
+        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        // Callback is used for GPS recording, It also superimposes the lines onto the map
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult?) {
-                super.onLocationResult(p0)
-                lastLocation = p0!!.lastLocation
+    }
 
-                // appending each new point to the file
-                val coordsFileInput = "${lastLocation.latitude},${lastLocation.longitude}\n"
-                Log.i("Appending data to file", "$coordsFileInput added to file")
-                applicationContext.openFileOutput(drawing.title, Context.MODE_APPEND).use {
-                    it.write(coordsFileInput.toByteArray())
-                }
-                val current_file = File(applicationContext.filesDir, drawing.title)
-                displayCoords(current_file)
-            }
+    override fun deleteFragment() {
+        Toast.makeText(this, "Delete x fragment", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun viewFragment() {
+        Toast.makeText(this, "View x fragments", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun newFragment() {
+        Toast.makeText(this, "Make New Fragment", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun editFragment() {
+        Toast.makeText(this, "Edit selected Fragment", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.New -> openNewDialog()
+            R.id.View -> openViewDialog()
+            R.id.Edit -> openEditDialog()
+            R.id.Delete -> openDeleteDialog()
         }
-
-        createLocationRequest()
+        return super.onOptionsItemSelected(item)
     }
 
-    private fun getDrawing(database: DrawingsDatabase) {
-        //TODO - I am cheating here, the database calls are happining on the main thread - this needs to be fixed
-        drawing = database.drawingDao().getDrawingById(drawingID)
-        Log.d("Drawing Loaded", "${drawing.title} has been successfully retrieved")
-
-        // Everything is ready to set map up
-        setUpMap()
-    }
-
-    private fun displayCoords(currentFile: File) {
-        // Takes each line in file, converts it to a LatLng object and passes it into a list
-        val list: MutableList<LatLng> = ArrayList()
-        currentFile.forEachLine {
-            val (lat, lng) = it.split(",")
-            val value = LatLng(lat.toDouble(), lng.toDouble())
-            list.add(value)
+    private fun openDeleteDialog() {
+        val dialog: DeleteLineDialog = DeleteLineDialog()
+        var bundle: Bundle = Bundle()
+        val fragments = ArrayList<Int>()
+        for (fragment in getFragmentNames()) {
+            fragments.add(fragment.toInt())
         }
-
-        // Set up polyline options
-        val polylineOptions = PolylineOptions()
-            .addAll(list)
-            .geodesic(true)
-            .color(Color.BLUE)
-            .width(30f)
-            .jointType(ROUND)
-
-        // Apply line to map
-        map.addPolyline(polylineOptions)
+        bundle.putIntegerArrayList("fragments",fragments)
+        dialog.arguments = bundle
+        dialog.show(supportFragmentManager, "Delete Line")
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    private fun openViewDialog() {
+        val dialog: ViewLineDialog = ViewLineDialog()
+        var bundle: Bundle = Bundle()
+        val fragments = ArrayList<Int>()
+        for (fragment in getFragmentNames()) {
+            fragments.add(fragment.toInt())
+        }
+        bundle.putIntegerArrayList("fragments", fragments)
+        dialog.arguments = bundle
+        dialog.show(supportFragmentManager, "View Lines")
+    }
+
+    private fun openEditDialog() {
+        val dialog: EditLineDialog = EditLineDialog()
+        var bundle: Bundle = Bundle()
+        val fragments = ArrayList<Int>()
+        for (fragment in getFragmentNames()) {
+            fragments.add(fragment.toInt())
+        }
+        bundle.putIntegerArrayList("fragments", fragments)
+        dialog.arguments = bundle
+        dialog.show(supportFragmentManager, "Edit Line")
+    }
+
+    private fun openNewDialog() {
+        val dialog: CreateNewLineDialog =
+            CreateNewLineDialog()
+        dialog.show(supportFragmentManager, "New Line")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_drawing, menu)
+        return true
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.uiSettings.isZoomControlsEnabled = true
@@ -131,86 +175,121 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         // TODO - this is running on the main thread which makes it blocking! needs to be run on a different thread
         val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
+
+        // set global drawing object - used to retrieve id, map type, fragment amount, directory name ect
         getDrawing(database)
+
+        // Create / read file structure - sets current fragment
+        makeFileStructure()
+
+        // Set location callback and start recording to currentFragment file
+        makeLocationCallback()
     }
 
-    override fun onMarkerClick(p0: Marker?) = false
+    private fun makeLocationCallback() {
+        // Callback is used for GPS recording, It also superimposes the lines onto the map
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult?) {
+                super.onLocationResult(p0)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // This function executes if it recieves a RESULT_OK for a REQUEST_CHECK_SETTINGS request from createLocationRequest
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == REQUEST_CHECK_SETTINGS) {
-            locationUpdateState = true
-            startLocationUpdates()
-        }
-    }
+                if (recordLocation) {
+                    lastLocation = p0!!.lastLocation
 
-    override fun onPause() {
-        // Stops the location update requests
-        super.onPause()
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
+                    // appending each new point to the file
+                    val coordsFileInput = "${lastLocation.latitude},${lastLocation.longitude}\n"
+                    Log.i("Appending data to file", "$coordsFileInput added to file $currentFragment")
 
-    public override fun onResume() {
-        // Restarts the location update requests
-        super.onResume()
-        if (!locationUpdateState) {
-            startLocationUpdates()
-        }
-    }
+                    //TODO - test is not a valid name
+                    val test = FileOutputStream(
+                        File("${applicationContext.filesDir}$currentFragmentPath", currentFragment),
+                        true
+                    )
+                    test.write(coordsFileInput.toByteArray())
+                    test.close()
 
-    companion object {
-        // companion object used in setUpMap, createLocationRequest, onActivityResult
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-        private const val REQUEST_CHECK_SETTINGS = 2
-//        private const val FILE_NAME = "test2.txt"
-    }
-
-    private fun setUpMap() {
-        // Checks if the permission ACCESS_FINE_LOCATION has been granted - this permission lets us get long/lat of user
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE)
-            return
-        }
-
-        // Enables a layer which displays a light blue dot on the user's location. Layer comes with a button which
-        // recenter's map to users location
-        map.isMyLocationEnabled = true
-
-        // ----------------- user preference: the map type should be changeable from preferences -------------//
-        map.mapType = GoogleMap.MAP_TYPE_TERRAIN
-
-        // get last known location
-        fusedLocationClient.lastLocation.addOnSuccessListener(this) {location ->
-            if (location != null) {
-                lastLocation = location
-                val currentLatLng = LatLng(location.latitude, location.longitude)
-                // Places custom marker
-                placeMarkerOnMap(currentLatLng)
-                // Sets custom user icon
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18f))
+                    val current_file = File("${applicationContext.filesDir}$currentFragmentPath", currentFragment)
+                    displayCoords(current_file)
+                }
             }
         }
 
-        // Creation of file to be used to record long/lat pairs
+        createLocationRequest()
+    }
+
+    private fun makeFileStructure() {
+        currentFragmentPath = "/${drawing.folderName}/"
+
+        if (!directoryExists()) {
+            // Base case - new drawing
+            makedirectory()
+        } else {
+            val fragments = getFragmentNames()
+            // TODO may need to reorganise the file names if a fragment has been deleted
+            // EG fragments 123 - 2 gets deleted = 13, max = 3 next frag = 4. should be max = 2 next frag = 3
+            val nextFragment = max(fragments).toInt() + 1
+            currentFragment = "$nextFragment.txt"
+            makefile()
+        }
+//        makefile()
+    }
+
+    private fun getFragmentNames(): MutableList<String> {
+        val directory = File(applicationContext.filesDir, drawing.folderName)
+        val fragments : MutableList<String> = ArrayList()
+        for (file in directory.listFiles()) {
+            fragments.add(FilenameUtils.getBaseName(file.toString()))
+        }
+        return fragments
+    }
+
+    private fun directoryExists(): Boolean {
+        // Checks if the directory has been made previously
+        val file: File = applicationContext.getFileStreamPath(drawing.folderName)
+        return file.exists()
+    }
+
+    private fun fileExist(): Boolean {
+        // Checks if the file has been made previously
+        val directory = File(applicationContext.filesDir, drawing.folderName)
+        return directory.exists()
+    }
+
+    private fun makedirectory() {
+        if (!directoryExists()) {
+            Log.d("Directory creation", "${drawing.folderName} Created")
+            val file = File(applicationContext.filesDir, drawing.folderName)
+            file.mkdir()
+
+            // If directory did not exist - no fragment exists, create first fragment
+            // If it is the first fragment its path is
+            currentFragment = "1.txt"
+            Log.d("Fragment path", "Current path is $currentFragmentPath$currentFragment")
+            makefile()
+        } else {
+            Log.d("Directory Exists", "Directory already exists")
+        }
+    }
+
+    private fun makefile() {
         if (!fileExist()) {
             //If the file does not exist at launch, create it
-            Log.d("File Creation", "${drawing.title} Created")
-            val file = File(applicationContext.filesDir, drawing.title)
+            Log.d("File Creation", "$currentFragmentPath Created")
+            Log.d("Trying to make file", "File name = ${applicationContext.filesDir}$currentFragmentPath")
+            val file = File("${applicationContext.filesDir}$currentFragmentPath", currentFragment)
             file.createNewFile()
         } else {
             Log.d("File Exists", "File already exists")
         }
     }
 
-    private fun fileExist(): Boolean {
-        // Checks if the file has been made previously
-        val file: File = applicationContext.getFileStreamPath(drawing.title)
-        return file.exists()
-    }
 
+
+
+
+
+
+
+    /////////////////////////// Functions do not effect file structure ////////////////////////////////////
     private fun placeMarkerOnMap(location: LatLng) {
         // create markerOptions object & set user's current location as the position
         val markerOptions = MarkerOptions().position(location)
@@ -267,4 +346,97 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }
         }
     }
+
+    private fun displayCoords(currentFile: File) {
+        // Takes each line in file, converts it to a LatLng object and passes it into a list
+        val list: MutableList<LatLng> = ArrayList()
+        currentFile.forEachLine {
+            val (lat, lng) = it.split(",")
+            val value = LatLng(lat.toDouble(), lng.toDouble())
+            list.add(value)
+        }
+
+        // Set up polyline options
+        val polylineOptions = PolylineOptions()
+            .addAll(list)
+            .geodesic(true)
+            .color(Color.BLUE)
+            .width(30f)
+            .jointType(ROUND)
+
+        // Apply line to map
+        map.addPolyline(polylineOptions)
+    }
+
+    override fun onPause() {
+        // Stops the location update requests
+        super.onPause()
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    public override fun onResume() {
+        // Restarts the location update requests
+        super.onResume()
+        recordLocation = false
+        if (!locationUpdateState) {
+            createLocationRequest()
+        }
+    }
+
+    private fun getDrawing(database: DrawingsDatabase) {
+        //TODO - I am cheating here, the database calls are happining on the main thread - this needs to be fixed
+        drawing = database.drawingDao().getDrawingById(drawingID)
+        Log.d("Drawing Loaded", "${drawing.title} has been successfully retrieved")
+
+        // Everything is ready to set map up
+        setUpMap()
+    }
+
+    override fun onMarkerClick(p0: Marker?) = false
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        // This function executes if it recieves a RESULT_OK for a REQUEST_CHECK_SETTINGS request from createLocationRequest
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == REQUEST_CHECK_SETTINGS) {
+            locationUpdateState = true
+            startLocationUpdates()
+        }
+    }
+
+    private fun setUpMap() {
+        // Checks if the permission ACCESS_FINE_LOCATION has been granted - this permission lets us get long/lat of user
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE)
+            return
+        }
+
+        // Enables a layer which displays a light blue dot on the user's location. Layer comes with a button which
+        // recenter's map to users location
+        map.isMyLocationEnabled = true
+
+        // ----------------- user preference: the map type should be changeable from preferences -------------//
+        map.mapType = GoogleMap.MAP_TYPE_TERRAIN
+
+        // get last known location
+        fusedLocationClient.lastLocation.addOnSuccessListener(this) {location ->
+            if (location != null) {
+                lastLocation = location
+                val currentLatLng = LatLng(location.latitude, location.longitude)
+                // Places custom marker
+                placeMarkerOnMap(currentLatLng)
+                // Sets custom user icon
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18f))
+            }
+        }
+    }
+
+    companion object {
+        // companion object used in setUpMap, createLocationRequest, onActivityResult
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        private const val REQUEST_CHECK_SETTINGS = 2
+        private var recordLocation = false
+    }
+
 }

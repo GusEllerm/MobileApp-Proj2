@@ -17,4 +17,15 @@
     <string name="global_drawings">Global drawings</string>
     <string name="add_vote">Vote</string>
     <string name="remove_vote">Undo Vote</string>
+
+    <string-array name="drawing_spinner">
+        <item>New</item>
+        <item>View</item>
+        <item>Edit</item>
+        <item>Delete</item>
+    </string-array>
+    <string name="menu_item_new">New</string>
+    <string name="menu_item_edit">Edit</string>
+    <string name="menu_item_delete">Delete</string>
+    <string name="menu_item_view">View</string>
 </resources>
