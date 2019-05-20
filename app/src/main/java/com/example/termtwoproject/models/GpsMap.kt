@@ -23,12 +23,14 @@ data class GpsMap(val id : Int, val title : String, val type : String, val fragm
             val jsonFragment = JSONObject()
             jsonFragment.put("lineColour", it.lineColour)
             jsonFragment.put("zoom", it.zoom)
+            jsonFragment.put("id", it.id)
             val jsonCoordinates = JSONArray()
             it.coordinates.forEach { seq ->
                 val jsonCoord = JSONObject()
                 jsonCoord.put("sequence", seq.sequence)
                 jsonCoord.put("longitude", seq.longitude)
                 jsonCoord.put("latitude", seq.latitude)
+                jsonCoord.put("id", seq.id)
                 jsonCoordinates.put(jsonCoord)
             }
             jsonFragment.put("coordinates", jsonCoordinates)
@@ -56,18 +58,19 @@ data class GpsMap(val id : Int, val title : String, val type : String, val fragm
                 val currentFragment = fragments.getJSONObject(i)
                 val lineColour : String = currentFragment.getString("lineColour")
                 val zoom : Int = currentFragment.getInt("zoom")
-
+                val fragId : Int = currentFragment.getInt("id")
                 val coordinateJSON = currentFragment.getJSONArray("coordinates")
                 val coordinateList = mutableListOf<Coordinate>()
                 for (j in 0..(coordinateJSON.length() - 1)) {
                     val currentCoordinate = coordinateJSON.getJSONObject(j)
                     coordinateList.add(Coordinate(
+                        currentCoordinate.getInt("id"),
                         currentCoordinate.getDouble("longitude"),
                         currentCoordinate.getDouble("latitude"),
                         currentCoordinate.getInt("sequence")
                     ))
                 }
-                fragmentList.add(Fragment(lineColour, zoom, coordinateList))
+                fragmentList.add(Fragment(fragId, lineColour, zoom, coordinateList))
             }
             return GpsMap(id, mapTitle, mapType, numbersOfFragments, category, votes, fragmentList)
         }
