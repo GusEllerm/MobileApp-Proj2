@@ -37,11 +37,9 @@
             android:id="@+id/voteButton"
             app:layout_constraintTop_toBottomOf="@+id/rowCategoryText"
             app:layout_constraintStart_toStartOf="@+id/rowCategoryText"/>
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/rowMap"
-              android:layout_width="194dp"
-              android:layout_height="151dp"
-              android:name="com.google.android.gms.maps.MapFragment" app:layout_constraintTop_toTopOf="parent"
-              app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="8dp"
-              android:layout_marginStart="8dp"/>
+    <com.google.android.gms.maps.MapView
+            android:layout_width="182dp"
+            android:layout_height="141dp"
+            android:id="@+id/rowMap" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,28 +1,18 @@
 package com.example.termtwoproject
 
-import android.content.Context
+
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.MapView
 
-class GpsMapViewHolder(drawingRow : View) : RecyclerView.ViewHolder(drawingRow), OnMapReadyCallback {
+class GpsMapViewHolder(drawingRow : View) : RecyclerView.ViewHolder(drawingRow) {
     val mapCategoryText = drawingRow.findViewById<TextView>(R.id.rowCategoryText)
     val mapTitleText = drawingRow.findViewById<TextView>(R.id.rowTitleText)
     val mapVotesText = drawingRow.findViewById<TextView>(R.id.rowVotesText)
 
     //private val mapView = drawingRow.findViewById<MapView>(R.id.mapView)
+    val map = drawingRow.findViewById<MapView>(R.id.rowMap)
 
-    var currentMap : GoogleMap? = null
-
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        currentMap = googleMap
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-    }
 
 }
