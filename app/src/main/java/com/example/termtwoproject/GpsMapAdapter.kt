@@ -4,10 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.termtwoproject.models.PostModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import java.net.URL
 
@@ -20,7 +22,7 @@ class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapVi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GpsMapViewHolder {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.row_drawing, parent, false)
-        val holder = GpsMapViewHolder(view)
+        val holder = GpsMapViewHolder(view, context)
         val voteButton = view.findViewById<Button>(R.id.voteButton)
         voteButton.setOnClickListener {
             val id = mapIds[holder.adapterPosition]
@@ -44,12 +46,6 @@ class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapVi
             holder.mapVotesText.text = it.votes.toString()
         }.execute(url)
 
-        val googleMap : GoogleMap? = holder.currentMap
-        val sydney = LatLng(-34.0, 151.0)
-        if (googleMap != null) {
-            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-            //
-        }
 
     }
 

@@ -50,6 +50,7 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_draw)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
