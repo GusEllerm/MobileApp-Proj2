@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/New"
+          android:title="@string/menu_item_new"
+          app:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/View"
+          android:title="@string/menu_item_view"
+          app:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/Edit"
+          android:title="@string/menu_item_edit"
+          app:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/Delete"
+          android:title="@string/menu_item_delete"
+          app:showAsAction="never">
+    </item>
+
+</menu>
