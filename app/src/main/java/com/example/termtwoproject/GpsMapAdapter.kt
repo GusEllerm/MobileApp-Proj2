@@ -46,6 +46,13 @@ class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapVi
             holder.mapVotesText.text = it.votes.toString()
         }.execute(url)
 
+        val mapFragment = (context as GlobalDrawingsActivity).supportFragmentManager.
+            findFragmentById(R.id.mapFragment) as SupportMapFragment
+        mapFragment.getMapAsync {
+            val sydney = LatLng(-34.0, 151.0)
+            it.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        }
+
 
     }
 

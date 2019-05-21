@@ -1,6 +1,5 @@
 package com.example.termtwoproject
 
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
@@ -13,7 +12,6 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import android.util.Log
 import androidx.room.Room
-import com.example.termtwoproject.Database.DbWorkerThread
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
 import com.google.android.gms.common.api.ResolvableApiException
@@ -25,8 +23,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.maps.model.JointType.ROUND
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -52,7 +48,7 @@ class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
         val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+            .findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
