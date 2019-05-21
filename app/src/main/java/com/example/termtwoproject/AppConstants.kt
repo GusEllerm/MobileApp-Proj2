@@ -15,7 +15,7 @@ object AppConstants {
     val CATEGORIES = mapOf("Any" to "")
 
 
-    private const val END_POINT = "http://101.100.139.72:4567/api"
+    private const val END_POINT = "http://192.168.1.100:4567/api"
 
     const val GPS_END = "$END_POINT/gps_map"
 
