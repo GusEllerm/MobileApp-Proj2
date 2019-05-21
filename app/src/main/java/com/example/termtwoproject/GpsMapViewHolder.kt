@@ -19,12 +19,6 @@ class GpsMapViewHolder(drawingRow : View) : RecyclerView.ViewHolder(drawingRow),
     var currentMap : GoogleMap? = null
 
 
-    init {
-        val mapFragment = (drawingRow.context as AppCompatActivity).supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-    }
-
     override fun onMapReady(googleMap: GoogleMap) {
         currentMap = googleMap
         val sydney = LatLng(-34.0, 151.0)
