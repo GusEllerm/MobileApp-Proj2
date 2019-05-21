@@ -108,19 +108,25 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     override fun deleteFragment(fragNumber: String) {
         stopRecording()
-        val fragNum = fragNumber.takeLast(1).toInt()
-        val fileToDelete = File("${applicationContext.filesDir}$currentFragmentPath", "$fragNum.txt")
+        if (getFragmentNames().size > 1) {
+            val fragNum = fragNumber.takeLast(1).toInt()
+            val fileToDelete = File("${applicationContext.filesDir}$currentFragmentPath", "$fragNum.txt")
 
-        try {
-            fileToDelete.delete()
-        } catch (e: Exception) {
-            //TODO - what if the file cant be deleted?
+            try {
+                fileToDelete.delete()
+            } catch (e: Exception) {
+                //TODO - what if the file cant be deleted?
+            }
+
+            // reoder and rename the remaining files so they are sequential 1 - 10
+            filesRenameReorder(fragNum)
+
+            Toast.makeText(this, "$fragNum was selected", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.d("Fragment amount", "There are ${getFragmentNames().size} fragments in this drawing")
+            Toast.makeText(this, "You cant delete the last line! If you want to delete the drawing please do so " +
+                    "from the list", Toast.LENGTH_LONG).show()
         }
-
-        // reoder and rename the remaining files so they are sequential 1 - 10
-        filesRenameReorder(fragNum)
-
-        Toast.makeText(this, "$fragNum was selected", Toast.LENGTH_SHORT).show()
     }
 
     private fun filesRenameReorder(removedItem: Int) {
@@ -147,12 +153,21 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     override fun newFragment() {
         stopRecording()
 
-        // makeFileStructure should create a new fragment, as the directory must already exist
-        try {
-            makeFileStructure()
-        } finally {
-            val currentFrags = getFragmentNames()
-            Toast.makeText(this, "Line ${currentFrags[currentFrags.lastIndex].toInt() + 1} has been created", Toast.LENGTH_SHORT).show()
+        if (getFragmentNames().size < 9) {
+            // makeFileStructure should create a new fragment, as the directory must already exist
+            try {
+                makeFileStructure()
+            } finally {
+                val currentFrags = getFragmentNames()
+                Toast.makeText(
+                    this,
+                    "Line ${currentFrags[currentFrags.lastIndex].toInt()} has been created",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        } else {
+            Log.d("Fragment amount", "There are ${getFragmentNames().size} fragments")
+            Toast.makeText(this, "You cant have more than 9 lines!", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -303,14 +318,14 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     private fun directoryExists(): Boolean {
         // Checks if the directory has been made previously
-        val file: File = applicationContext.getFileStreamPath(drawing.folderName)
-        return file.exists()
+        val directory = File(applicationContext.filesDir, drawing.folderName)
+        return directory.exists()
     }
 
     private fun fileExist(): Boolean {
         // Checks if the file has been made previously
-        val directory = File(applicationContext.filesDir, drawing.folderName)
-        return directory.exists()
+        val file = File("${applicationContext.filesDir}$currentFragmentPath", currentFragment)
+        return file.exists()
     }
 
     private fun makedirectory() {
