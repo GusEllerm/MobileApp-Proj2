@@ -42,6 +42,9 @@ import java.util.Collections.max
 class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, CreateNewLineDialog.NewLineDialogListner,
 EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, DeleteLineDialog.DeleteLineDialogListner {
 
+
+    // TODO - when we create the fragments - should be instant only gets made when data recorded
+
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
@@ -105,17 +108,35 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     override fun deleteFragment(fragNumber: String) {
         stopRecording()
-//        val fragNum = fragNumber.takeLast(1).toInt()
-//        val fileToDelete = File("${applicationContext.filesDir}$currentFragmentPath", "$fragNum.txt")
-//
-//        try {
-//            fileToDelete.delete()
-//        } catch (e: Exception) {
-//            //TODO - what if the file cant be deleted?
-//        }
+        val fragNum = fragNumber.takeLast(1).toInt()
+        val fileToDelete = File("${applicationContext.filesDir}$currentFragmentPath", "$fragNum.txt")
 
+        try {
+            fileToDelete.delete()
+        } catch (e: Exception) {
+            //TODO - what if the file cant be deleted?
+        }
 
-//        Toast.makeText(this, "$fragNum was selected", Toast.LENGTH_SHORT).show()
+        // reoder and rename the remaining files so they are sequential 1 - 10
+        filesRenameReorder(fragNum)
+
+        Toast.makeText(this, "$fragNum was selected", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun filesRenameReorder(removedItem: Int) {
+        val fragments = getFragmentNames()
+        // Make sure fragments are in order
+        fragments.sort()
+
+        // Rename files in order
+        for (fragment in fragments) {
+            if (fragment.toInt() > removedItem) {
+                val currentFrag = File("${applicationContext.filesDir}$currentFragmentPath", "$fragment.txt")
+                currentFrag.renameTo(File("${applicationContext.filesDir}$currentFragmentPath",
+                    "${fragment.toInt() - 1}.txt"))
+            }
+        }
+
     }
 
     override fun viewFragment() {
@@ -187,8 +208,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     }
 
     private fun openNewDialog() {
-        val dialog: CreateNewLineDialog =
-            CreateNewLineDialog()
+        val dialog: CreateNewLineDialog = CreateNewLineDialog()
         dialog.show(supportFragmentManager, "New Line")
     }
 
