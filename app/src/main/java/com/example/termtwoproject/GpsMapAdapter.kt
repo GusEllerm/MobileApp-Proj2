@@ -38,16 +38,18 @@ class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapVi
         val query = "?id=$mapId"
         val url = URL(AppConstants.GPS_END + query)
 
-        val googleMap : GoogleMap = holder.currentMap
-
         MapDownloader {
             holder.mapCategoryText.text = it.category
             holder.mapTitleText.text = it.title
             holder.mapVotesText.text = it.votes.toString()
         }.execute(url)
 
+        val googleMap : GoogleMap? = holder.currentMap
         val sydney = LatLng(-34.0, 151.0)
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        if (googleMap != null) {
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+            //
+        }
 
     }
 
