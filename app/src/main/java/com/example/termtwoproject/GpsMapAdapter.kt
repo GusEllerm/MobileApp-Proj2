@@ -22,7 +22,7 @@ class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapVi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GpsMapViewHolder {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.row_drawing, parent, false)
-        val holder = GpsMapViewHolder(view, context)
+        val holder = GpsMapViewHolder(view)
         val voteButton = view.findViewById<Button>(R.id.voteButton)
         voteButton.setOnClickListener {
             val id = mapIds[holder.adapterPosition]
