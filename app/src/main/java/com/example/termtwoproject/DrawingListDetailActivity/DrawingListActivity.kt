@@ -64,7 +64,9 @@ class DrawingListActivity : AppCompatActivity() {
         }
 
         // .fallbackToDestructiveMigration() -> allow room database to delete eveything on databse reconfigeration
+        // TODO - this is not running on a seperate thread - I think the dbworkerclass isint working
         val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings")
+            .allowMainThreadQueries()
             .fallbackToDestructiveMigration()
             .build()
 
