@@ -19,10 +19,7 @@ import android.widget.Toast
 import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
-import com.example.termtwoproject.Dialogues.CreateNewLineDialog
-import com.example.termtwoproject.Dialogues.DeleteLineDialog
-import com.example.termtwoproject.Dialogues.EditLineDialog
-import com.example.termtwoproject.Dialogues.ViewLineDialog
+import com.example.termtwoproject.Dialogues.*
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 
@@ -40,7 +37,7 @@ import java.util.Collections.max
 
 
 class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, CreateNewLineDialog.NewLineDialogListner,
-EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, DeleteLineDialog.DeleteLineDialogListner {
+EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, DeleteLineDialog.DeleteLineDialogListner, UploadLineDialog.UploadLineDialogListener {
 
 
     // TODO - when we create the fragments - should be instant only gets made when data recorded
@@ -177,12 +174,18 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         Toast.makeText(this, "Edit selected Fragment", Toast.LENGTH_SHORT).show()
     }
 
+    override fun uploadFragment() {
+        stopRecording()
+
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.New -> openNewDialog()
             R.id.View -> openViewDialog()
             R.id.Edit -> openEditDialog()
             R.id.Delete -> openDeleteDialog()
+            R.id.Upload -> openUploadDialog()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -221,6 +224,12 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         bundle.putIntegerArrayList("fragments", fragments)
         dialog.arguments = bundle
         dialog.show(supportFragmentManager, "Edit Line")
+    }
+
+    private fun openUploadDialog() {
+        val dialog : UploadLineDialog = UploadLineDialog()
+        val bundle: Bundle = Bundle()
+        println("uploading map!")
     }
 
     private fun openNewDialog() {
