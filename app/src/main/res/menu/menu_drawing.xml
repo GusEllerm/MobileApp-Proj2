@@ -21,4 +21,9 @@
           app:showAsAction="never">
     </item>
 
+    <item android:id="@+id/Upload"
+          android:title="@string/menu_item_upload"
+          app:showAsAction="never">
+    </item>
+
 </menu>

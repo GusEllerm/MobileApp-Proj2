@@ -184,7 +184,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             R.id.View -> openViewDialog()
             R.id.Edit -> openEditDialog()
             R.id.Delete -> openDeleteDialog()
-
+            R.id.Upload -> openUploadDialog()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -223,6 +223,12 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         bundle.putIntegerArrayList("fragments", fragments)
         dialog.arguments = bundle
         dialog.show(supportFragmentManager, "Edit Line")
+    }
+
+    private fun openUploadDialog() {
+        val dialog : UploadLineDialog = UploadLineDialog()
+        val bundle: Bundle = Bundle()
+        println("uploading map!")
     }
 
     private fun openNewDialog() {
