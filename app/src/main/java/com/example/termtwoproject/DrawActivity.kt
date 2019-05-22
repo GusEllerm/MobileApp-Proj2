@@ -3,6 +3,7 @@ package com.example.termtwoproject
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.location.Location
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.gms.maps.model.JointType.ROUND
 import com.google.android.material.snackbar.Snackbar
 import org.apache.commons.io.FilenameUtils
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Collections.max
@@ -229,7 +231,21 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     private fun openUploadDialog() {
         val dialog : UploadLineDialog = UploadLineDialog()
         val bundle: Bundle = Bundle()
-        println("uploading map!")
+        val callback = GoogleMap.SnapshotReadyCallback {
+            if (it != null) {
+                val stream = ByteArrayOutputStream()
+                it.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val image = stream.toByteArray()
+
+                bundle.putByteArray("snapshot", image)
+                dialog.arguments = bundle
+                dialog.show(supportFragmentManager, "Upload Drawing")
+            } else {
+                // cant generate snapshot
+            }
+        }
+        map.snapshot(callback)
+
     }
 
     private fun openNewDialog() {

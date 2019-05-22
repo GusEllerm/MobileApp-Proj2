@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/uploadTitleText" tools:text="@string/uploadTitle"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/uploadCategoryText"
+            tools:text="@string/uploadCategory"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/uploadMapTypeText"
+            tools:text="@string/uploadMapType"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/uploadFragmentAmounText"
+            tools:text="@string/uploadFragmentAmount"/>
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="384dp" tools:srcCompat="@tools:sample/backgrounds/scenic"
+            android:id="@+id/uploadSnapshot"/>
+    <Button
+            android:text="@string/uploadButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/button"/>
+</LinearLayout>

@@ -32,4 +32,11 @@
     <string name="menu_item_upload">Upload</string>
     <string name="drawing_activity_buttonStateTrue">STOP RECORDING</string>
     <string name="drawing_activity_buttonStateFalse">EXTEND CURRENT LINE</string>
+
+
+    <string name="uploadTitle">Title : %s</string>
+    <string name="uploadCategory">Category : %s</string>
+    <string name="uploadMapType">Map type : %s</string>
+    <string name="uploadFragmentAmount">Fragment amount : %d</string>
+    <string name="uploadButton">Upload drawing</string>
 </resources>
