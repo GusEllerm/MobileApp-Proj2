@@ -23,6 +23,7 @@
         <item>View</item>
         <item>Edit</item>
         <item>Delete</item>
+        <item>Upload</item>
     </string-array>
     <string name="menu_item_new">New</string>
     <string name="menu_item_edit">Edit</string>
