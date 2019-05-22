@@ -154,7 +154,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         if (getFragmentNames().size < 9) {
             // makeFileStructure should create a new fragment, as the directory must already exist
             try {
-                makeFileStructure()
+                makeFileStructure(true)
             } finally {
                 val currentFrags = getFragmentNames()
                 Toast.makeText(
@@ -176,7 +176,6 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     override fun uploadFragment() {
         stopRecording()
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -210,6 +209,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             fragments.add(fragment.toInt())
         }
         bundle.putIntegerArrayList("fragments", fragments)
+        bundle.putInt("currentFragment", Character.getNumericValue(currentFragment[0]))
         dialog.arguments = bundle
         dialog.show(supportFragmentManager, "View Lines")
     }
@@ -258,7 +258,9 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         }
 
         // TODO - this is running on the main thread which makes it blocking! needs to be run on a different thread
-        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
+        val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings")
+            .allowMainThreadQueries()
+            .build()
 
         // set global drawing object - used to retrieve id, map type, fragment amount, directory name ect
         getDrawing(database)
@@ -300,7 +302,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         createLocationRequest()
     }
 
-    private fun makeFileStructure() {
+    private fun makeFileStructure(fromNew: Boolean = false) {
         currentFragmentPath = "/${drawing.folderName}/"
 
         if (!directoryExists()) {
@@ -310,8 +312,19 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             val fragments = getFragmentNames()
             // TODO may need to reorganise the file names if a fragment has been deleted
             // EG fragments 123 - 2 gets deleted = 13, max = 3 next frag = 4. should be max = 2 next frag = 3
-            val nextFragment = max(fragments).toInt() + 1
-            currentFragment = "$nextFragment.txt"
+            // Add a new file if asked - if from another activity just start editing the last line
+            val lastFragment: Int
+            when (fromNew) {
+                true -> {
+                    lastFragment = max(fragments).toInt() + 1
+                    Log.d("Function executed from", "Create New Fragment (fragment $lastFragment created)")
+                }
+                false -> {
+                    lastFragment = max(fragments).toInt()
+                    Log.d("Function executed from", "entering activity (fragment $lastFragment selected)")
+                }
+            }
+            currentFragment = "$lastFragment.txt"
             makefile()
         }
 //        makefile()

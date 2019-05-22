@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
@@ -25,10 +26,16 @@ class ViewLineDialog: AppCompatDialogFragment() {
         val linearLayout = view?.findViewById<LinearLayout>(R.id.view_drawing_layout)
         val bundle: Bundle? = arguments
         val fragments = bundle?.getIntegerArrayList("fragments")
+        val currentFragment = bundle?.getInt("currentFragment")
 
         for (fragment in fragments.orEmpty()) {
             val checkbox: CheckBox = CheckBox(context)
             checkbox.text = "Line ${fragment.toString()}"
+            if (fragment == currentFragment) {
+                Log.d("HERE", "$fragment $currentFragment")
+                checkbox.isChecked = true
+                checkbox.isClickable = false
+            }
             checkbox.gravity = 1
 
             linearLayout?.addView(checkbox)
