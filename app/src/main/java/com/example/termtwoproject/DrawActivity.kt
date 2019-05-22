@@ -147,6 +147,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     override fun viewFragment() {
         stopRecording()
+        // The currentfragment should always be selected - and not be unselectable
         Toast.makeText(this, "View x fragments", Toast.LENGTH_SHORT).show()
     }
 
