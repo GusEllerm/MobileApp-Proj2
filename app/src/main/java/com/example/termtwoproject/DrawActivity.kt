@@ -16,6 +16,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
@@ -67,6 +68,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     // Start/Stop recording button
     private lateinit var startRecordingButton: Button
 
+    private lateinit var line_sig: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_draw)
@@ -76,6 +79,9 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         mapFragment.getMapAsync(this)
 
         recordLocation = false
+
+        line_sig = findViewById(R.id.lineNum)
+
 
         startRecordingButton = findViewById(R.id.StartRecording)
         startRecordingButton.setOnClickListener { view ->
@@ -98,6 +104,10 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     }
 
+    private fun updateLineNum() {
+        line_sig.text = "Line ${currentFragment[0]}"
+    }
+
     private fun stopRecording() {
         if (recordLocation) {
             // If recording stop
@@ -108,6 +118,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     override fun deleteFragment(fragNumber: String) {
         stopRecording()
+        // TODO - make it so you cant delete the line you are currently editing
         if (getFragmentNames().size > 1) {
             val fragNum = fragNumber.takeLast(1).toInt()
             val fileToDelete = File("${applicationContext.filesDir}$currentFragmentPath", "$fragNum.txt")
@@ -120,6 +131,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
             // reoder and rename the remaining files so they are sequential 1 - 10
             filesRenameReorder(fragNum)
+            updateLineNum() // For UI
 
             Toast.makeText(this, "$fragNum was selected", Toast.LENGTH_SHORT).show()
         } else {
@@ -145,8 +157,17 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     }
 
-    override fun viewFragment() {
+    override fun viewFragment(selectedFragments: MutableList<Int>, unselectedFragments: MutableList<Int>) {
         stopRecording()
+        viewFragments = selectedFragments
+        if (unselectedFragments.size > 0) {
+            Log.d("asd", "THIS HERE ${unselectedFragments[0]}")
+            // Need to get rid of line from drawing
+            for (unselectedLine in unselectedFragments) {
+                Log.d("asd", "THIS HERE $unselectedLine")
+                polylines[unselectedLine]?.remove()
+            }
+        }
         // The currentfragment should always be selected - and not be unselectable
         Toast.makeText(this, "View x fragments", Toast.LENGTH_SHORT).show()
     }
@@ -165,6 +186,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                     "Line ${currentFrags[currentFrags.lastIndex].toInt()} has been created",
                     Toast.LENGTH_SHORT
                 ).show()
+                currentFragment = "${currentFrags[currentFrags.lastIndex]}.txt" // Set currentfragment to new fragment
+                updateLineNum() // Update UI
             }
         } else {
             Log.d("Fragment amount", "There are ${getFragmentNames().size} fragments")
@@ -172,9 +195,11 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         }
     }
 
-    override fun editFragment() {
+    override fun editFragment(fragNumber: Int) {
         stopRecording()
-        Toast.makeText(this, "Edit selected Fragment", Toast.LENGTH_SHORT).show()
+        currentFragment = "$fragNumber.txt"
+        updateLineNum()
+        Toast.makeText(this, "Editing line: $fragNumber", Toast.LENGTH_SHORT).show()
     }
 
     override fun uploadFragment() {
@@ -212,6 +237,11 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             fragments.add(fragment.toInt())
         }
         bundle.putIntegerArrayList("fragments", fragments)
+        var viewFragments_intArray = arrayListOf<Int>()
+        for (item in viewFragments) {
+            viewFragments_intArray.add(item)
+        }
+        bundle.putIntegerArrayList("viewFragments", viewFragments_intArray)
         bundle.putInt("currentFragment", Character.getNumericValue(currentFragment[0]))
         dialog.arguments = bundle
         dialog.show(supportFragmentManager, "View Lines")
@@ -225,6 +255,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             fragments.add(fragment.toInt())
         }
         bundle.putIntegerArrayList("fragments", fragments)
+        bundle.putInt("currentFragment", Character.getNumericValue(currentFragment[0]))
         dialog.arguments = bundle
         dialog.show(supportFragmentManager, "Edit Line")
     }
@@ -300,6 +331,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
         // Create / read file structure - sets current fragment
         makeFileStructure()
+        viewFragments.clear()
+        viewFragments.add(Character.getNumericValue(currentFragment[0]))
 
         // Set location callback and start recording to currentFragment file
         makeLocationCallback()
@@ -325,10 +358,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                     )
                     test.write(coordsFileInput.toByteArray())
                     test.close()
-
-                    val current_file = File("${applicationContext.filesDir}$currentFragmentPath", currentFragment)
-                    displayCoords(current_file)
                 }
+                displayCoords()
             }
         }
 
@@ -358,6 +389,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                 }
             }
             currentFragment = "$lastFragment.txt"
+            updateLineNum() // Update UI
             makefile()
         }
 //        makefile()
@@ -393,6 +425,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             // If directory did not exist - no fragment exists, create first fragment
             // If it is the first fragment its path is
             currentFragment = "1.txt"
+            updateLineNum() // Update UI
             Log.d("Fragment path", "Current path is $currentFragmentPath$currentFragment")
             makefile()
         } else {
@@ -477,25 +510,35 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         }
     }
 
-    private fun displayCoords(currentFile: File) {
+    private fun displayCoords() {
         // Takes each line in file, converts it to a LatLng object and passes it into a list
-        val list: MutableList<LatLng> = ArrayList()
-        currentFile.forEachLine {
-            val (lat, lng) = it.split(",")
-            val value = LatLng(lat.toDouble(), lng.toDouble())
-            list.add(value)
+
+        Log.d("This ran", "${viewFragments[0]}")
+        for (fragment in getFragmentNames()) {
+            var fragment_int = fragment.toInt()
+            if (viewFragments.contains(fragment_int)) {
+                val current_file = File("${applicationContext.filesDir}$currentFragmentPath", "$fragment.txt")
+                val list: MutableList<LatLng> = ArrayList()
+                current_file.forEachLine {
+                    val (lat, lng) = it.split(",")
+                    val value = LatLng(lat.toDouble(), lng.toDouble())
+                    list.add(value)
+                }
+
+                // Set up polyline options
+                val polylineOptions = PolylineOptions()
+                    .addAll(list)
+                    .geodesic(true)
+                    .color(Color.BLUE)
+                    .width(30f)
+                    .jointType(ROUND)
+                // Apply line to map
+                val polyline = map.addPolyline(polylineOptions)
+                // add polyline to map so we can get rid of it when we dont want to view it
+                Log.d("asd", "THIS HERE, $fragment_int")
+                polylines[fragment_int] = polyline
+            }
         }
-
-        // Set up polyline options
-        val polylineOptions = PolylineOptions()
-            .addAll(list)
-            .geodesic(true)
-            .color(Color.BLUE)
-            .width(30f)
-            .jointType(ROUND)
-
-        // Apply line to map
-        map.addPolyline(polylineOptions)
     }
 
     override fun onPause() {
@@ -567,6 +610,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val REQUEST_CHECK_SETTINGS = 2
         private var recordLocation = false
+        private var viewFragments = mutableListOf<Int>()
+        private var polylines = mutableMapOf<Int, Polyline>()
     }
 
 }

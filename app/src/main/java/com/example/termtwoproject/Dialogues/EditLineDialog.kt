@@ -16,6 +16,7 @@ import java.lang.ClassCastException
 class EditLineDialog: AppCompatDialogFragment() {
 
     lateinit var dialogListener: EditDialogListener
+    lateinit var fragNumber: String
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
@@ -25,11 +26,16 @@ class EditLineDialog: AppCompatDialogFragment() {
         val edit_radio_group = view?.findViewById<RadioGroup>(R.id.edit_radio_group)
         val bundle: Bundle? = arguments
         val fragments = bundle?.getIntegerArrayList("fragments")
+        val currentFragment = bundle?.getInt("currentFragment")
 
         for (fragment in fragments.orEmpty()) {
             val radioButton: RadioButton = RadioButton(context)
             radioButton.text = "Line ${fragment.toString()}"
             edit_radio_group?.addView(radioButton)
+            if (fragment == currentFragment) {
+                radioButton.isChecked = true
+            }
+            radioButton.setOnClickListener { fragNumber = radioButton.text[radioButton.text.lastIndex].toString() }
         }
         
         builder.setView(view)
@@ -41,7 +47,7 @@ class EditLineDialog: AppCompatDialogFragment() {
             })
             .setPositiveButton("Edit", object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    dialogListener.editFragment()
+                    dialogListener.editFragment(fragNumber.toInt())
                 }
             })
         return builder.create()
@@ -60,6 +66,6 @@ class EditLineDialog: AppCompatDialogFragment() {
     }
 
     interface EditDialogListener {
-        fun editFragment()
+        fun editFragment(fragNumber: Int)
     }
 }

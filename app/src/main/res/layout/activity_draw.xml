@@ -24,11 +24,14 @@
               android:name="com.google.android.gms.maps.SupportMapFragment" tools:layout_editor_absoluteY="332dp"
               tools:layout_editor_absoluteX="-16dp"/>
     <TextView
-            android:text="1"
+            android:text="Line: 1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lineNum" android:layout_marginTop="16dp"
+            android:id="@+id/lineNum"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="40dp" android:textAppearance="@style/TextAppearance.AppCompat.Display1"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/line_num_gradiant" android:paddingHorizontal="15dp"
+            android:paddingBottom="10dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
