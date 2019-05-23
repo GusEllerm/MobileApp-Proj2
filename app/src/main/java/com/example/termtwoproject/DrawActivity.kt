@@ -21,6 +21,7 @@ import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
 import com.example.termtwoproject.Dialogues.*
+import com.example.termtwoproject.models.Fragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 
@@ -238,6 +239,9 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                 val image = stream.toByteArray()
 
                 bundle.putByteArray("snapshot", image)
+
+                loadFragments()
+
                 dialog.arguments = bundle
                 dialog.show(supportFragmentManager, "Upload Drawing")
             } else {
@@ -245,7 +249,20 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             }
         }
         map.snapshot(callback)
+    }
 
+
+    private fun loadFragments(): Fragment? {
+        val fragmentNames = getFragmentNames()
+        val directory = File(applicationContext.filesDir, drawing.folderName)
+        try {
+            fragmentNames.forEach {
+                println(directory.absolutePath + "/" + it)
+            }
+        } catch (e : Exception) {
+            // error
+        }
+        return null
     }
 
     private fun openNewDialog() {
