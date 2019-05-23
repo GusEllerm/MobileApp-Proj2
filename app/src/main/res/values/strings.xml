@@ -39,4 +39,5 @@
     <string name="uploadMapType">Map type : %s</string>
     <string name="uploadFragmentAmount">Fragment amount : %d</string>
     <string name="uploadButton">Upload drawing</string>
+    <string name="uploadPreview">Map preview</string>
 </resources>

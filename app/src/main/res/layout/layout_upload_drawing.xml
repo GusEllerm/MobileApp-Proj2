@@ -20,12 +20,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/uploadFragmentAmounText"
             tools:text="@string/uploadFragmentAmount"/>
+    <TextView
+            android:text="@string/uploadPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/textView4"/>
     <ImageView
             android:layout_width="match_parent"
-            android:layout_height="384dp" tools:srcCompat="@tools:sample/backgrounds/scenic"
+            android:layout_height="256px" tools:srcCompat="@tools:sample/backgrounds/scenic"
             android:id="@+id/uploadSnapshot"/>
-    <Button
-            android:text="@string/uploadButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/button"/>
 </LinearLayout>

@@ -8,13 +8,17 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.util.Base64
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.termtwoproject.R
+import com.example.termtwoproject.models.GpsMap
+import org.json.JSONObject
 import java.lang.ClassCastException
+import java.nio.charset.StandardCharsets
 
 
 class UploadLineDialog : AppCompatDialogFragment() {
@@ -28,26 +32,22 @@ class UploadLineDialog : AppCompatDialogFragment() {
 
         //val linearLayout = view?.findViewById<LinearLayout>(R.id.view_upload_layout)
         val bundle: Bundle? = arguments
-        //val fragments = bundle?.getIntegerArrayList("fragments")
+        var map : GpsMap? = null
+        if (bundle != null) {
+            map = GpsMap.getGpsMapFromJSON(JSONObject(bundle.getString("GpsMap")))
+        }
 
-        //for (fragment in fragments.orEmpty()) {
-        //    val checkbox: CheckBox = CheckBox(context)
-        //    checkbox.text = "Line ${fragment.toString()}"
-        //    checkbox.gravity = 1
-        //    linearLayout?.addView(checkbox)
-        //}
-
-        if (view != null) {
+        if (view != null && map != null) {
             val titleText = view.findViewById<TextView>(R.id.uploadTitleText)
             val categoryText = view.findViewById<TextView>(R.id.uploadCategoryText)
             val mapTypeText = view.findViewById<TextView>(R.id.uploadMapTypeText)
             val fragmentText = view.findViewById<TextView>(R.id.uploadFragmentAmounText)
             val snapshotView = view.findViewById<ImageView>(R.id.uploadSnapshot)
-            titleText.text = String.format(getString(R.string.uploadTitle), "TEST TITLE")
-            categoryText.text = String.format(getString(R.string.uploadCategory), "CATEGORY")
-            mapTypeText.text = String.format(getString(R.string.uploadMapType), "MAPTYPE")
-            fragmentText.text = String.format(getString(R.string.uploadFragmentAmount), 4)
-            val bytes = bundle!!.getByteArray("snapshot")
+            titleText.text = String.format(getString(R.string.uploadTitle), map.title)
+            categoryText.text = String.format(getString(R.string.uploadCategory), map.category)
+            mapTypeText.text = String.format(getString(R.string.uploadMapType), map.type)
+            fragmentText.text = String.format(getString(R.string.uploadFragmentAmount), map.fragmentAmount)
+            val bytes = Base64.decode(map.imageData, Base64.DEFAULT)
             val bmp = BitmapFactory.decodeByteArray(bytes, 0,bytes.size)
             snapshotView.setImageBitmap(bmp)
         }
@@ -61,7 +61,7 @@ class UploadLineDialog : AppCompatDialogFragment() {
             })
             .setPositiveButton("Upload", object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    dialogListener.uploadFragment()
+                    dialogListener.uploadGpsMap(map)
                 }
             })
         return builder.create()
@@ -79,6 +79,6 @@ class UploadLineDialog : AppCompatDialogFragment() {
     }
 
     interface UploadLineDialogListener {
-        fun uploadFragment()
+        fun uploadGpsMap(gpsMap : GpsMap?)
     }
 }

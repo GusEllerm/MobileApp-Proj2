@@ -1,6 +1,8 @@
 package com.example.termtwoproject
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
@@ -44,14 +46,10 @@ class GpsMapAdapter(private val context: Context): RecyclerView.Adapter<GpsMapVi
             holder.mapCategoryText.text = it.category
             holder.mapTitleText.text = it.title
             holder.mapVotesText.text = it.votes.toString()
+            val bytes = Base64.decode(it.imageData, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            holder.mapPreviewImage.setImageBitmap(bitmap)
         }.execute(url)
-
-        val mapFragment = (context as GlobalDrawingsActivity).supportFragmentManager.
-            findFragmentById(R.id.mapFragment) as SupportMapFragment
-        mapFragment.getMapAsync {
-            val sydney = LatLng(-34.0, 151.0)
-            it.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-        }
 
 
     }

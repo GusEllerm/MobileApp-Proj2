@@ -1,13 +1,14 @@
 package com.example.termtwoproject.models
 
-import android.util.JsonWriter
+
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.OutputStreamWriter
 
 
 data class GpsMap(val id : Int, val title : String, val type : String, val fragmentAmount : Int, val category : String,
-                  var votes : Int, val fragments : List<Fragment>) {
+                  var votes : Int, val fragments : List<Fragment>, var imageData : String) {
 
 
     fun toJSON() : JSONObject {
@@ -18,6 +19,7 @@ data class GpsMap(val id : Int, val title : String, val type : String, val fragm
         rootObject.put("fragmentAmount", fragmentAmount)
         rootObject.put("category", category)
         rootObject.put("votes", votes)
+        rootObject.put("imageData", imageData)
         val fragmentArray = JSONArray()
         fragments.forEach {
             val jsonFragment = JSONObject()
@@ -41,6 +43,18 @@ data class GpsMap(val id : Int, val title : String, val type : String, val fragm
     }
 
 
+    fun getBounds() : LatLngBounds {
+        val builder = LatLngBounds.builder()
+        fragments.forEach {fragment ->
+            fragment.coordinates.forEach {
+                val tempMarker = LatLng(it.latitude, it.longitude)
+                builder.include(tempMarker)
+            }
+        }
+        return builder.build()
+    }
+
+
 
     companion object {
         fun getGpsMapFromJSON(json : JSONObject) : GpsMap {
@@ -49,7 +63,7 @@ data class GpsMap(val id : Int, val title : String, val type : String, val fragm
             val mapTitle : String = json.getString("mapTitle")
             val category : String = json.getString("category")
             val votes : Int = json.getInt("votes")
-
+            val imageData : String = json.getString("imageData")
             //get fragments and coordinates
             val numbersOfFragments : Int = json.getInt("fragmentAmount")
             val fragments = json.getJSONArray("fragments")
@@ -72,7 +86,7 @@ data class GpsMap(val id : Int, val title : String, val type : String, val fragm
                 }
                 fragmentList.add(Fragment(fragId, lineColour, zoom, coordinateList))
             }
-            return GpsMap(id, mapTitle, mapType, numbersOfFragments, category, votes, fragmentList)
+            return GpsMap(id, mapTitle, mapType, numbersOfFragments, category, votes, fragmentList, imageData)
         }
     }
 
