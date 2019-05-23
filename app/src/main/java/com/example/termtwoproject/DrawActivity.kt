@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Base64
 import androidx.core.app.ActivityCompat
 import android.util.Log
 import android.view.Menu
@@ -21,14 +22,14 @@ import androidx.room.Room
 import com.example.termtwoproject.Database.Drawing
 import com.example.termtwoproject.Database.DrawingsDatabase
 import com.example.termtwoproject.Dialogues.*
+import com.example.termtwoproject.models.Coordinate
 import com.example.termtwoproject.models.Fragment
+import com.example.termtwoproject.models.GpsMap
+import com.example.termtwoproject.models.PostModel
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import com.google.android.gms.maps.*
 
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.maps.model.JointType.ROUND
 import com.google.android.material.snackbar.Snackbar
@@ -36,6 +37,7 @@ import org.apache.commons.io.FilenameUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URL
 import java.util.Collections.max
 
 
@@ -177,8 +179,17 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         Toast.makeText(this, "Edit selected Fragment", Toast.LENGTH_SHORT).show()
     }
 
-    override fun uploadFragment() {
+    override fun uploadGpsMap(gpsMap : GpsMap?) {
         stopRecording()
+        if (gpsMap != null) {
+            val url = URL(AppConstants.GPS_END)
+            val model = PostModel(url, gpsMap, false, "POST")
+            MapApiHandler {
+                // id of new item maybe store it in database?
+            }.execute(model)
+        } else {
+            // TODO error message?
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -230,39 +241,73 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     }
 
     private fun openUploadDialog() {
-        val dialog : UploadLineDialog = UploadLineDialog()
-        val bundle: Bundle = Bundle()
+        val dialog= UploadLineDialog()
+        val bundle = Bundle()
+        val fragments = loadFragments()
+        val gpsMap = GpsMap(-1, drawing.title, drawing.mapType, fragments.size,
+            drawing.category.toString(), 0, fragments, "")
+
+
+        val width = resources.displayMetrics.widthPixels
+        val height = resources.displayMetrics.heightPixels
+        val padding = (width * .10).toInt()
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(gpsMap.getBounds(), width, height, padding))
+
         val callback = GoogleMap.SnapshotReadyCallback {
             if (it != null) {
+                val resizedBitMap = Bitmap.createScaledBitmap(it, 256, 256, false)
                 val stream = ByteArrayOutputStream()
-                it.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                resizedBitMap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                 val image = stream.toByteArray()
+                val imageAsBase64 = Base64.encodeToString(image, Base64.DEFAULT)
+                gpsMap.imageData = imageAsBase64
 
-                bundle.putByteArray("snapshot", image)
-
-                loadFragments()
-
+                val mapAsString = gpsMap.toJSON().toString()
+                bundle.putString("GpsMap", mapAsString)
                 dialog.arguments = bundle
                 dialog.show(supportFragmentManager, "Upload Drawing")
             } else {
                 // cant generate snapshot
             }
         }
-        map.snapshot(callback)
+        map.setOnMapLoadedCallback {
+            map.snapshot(callback)
+        }
     }
 
 
-    private fun loadFragments(): Fragment? {
-        val fragmentNames = getFragmentNames()
+    /**
+     * Helper functions to load fragments into a object that can be send to the database
+     */
+    private fun loadFragments(): List<Fragment> {
         val directory = File(applicationContext.filesDir, drawing.folderName)
-        try {
-            fragmentNames.forEach {
-                println(directory.absolutePath + "/" + it)
+        val fragments = mutableListOf<Fragment>()
+        if (directory.exists()) {
+            directory.listFiles().forEach {
+                if (it != null) {
+                    val fragment = Fragment(-1, "RED", 10, loadCoordinates(it))
+                    if (fragment.coordinates.isNotEmpty()) {
+                        fragments.add(fragment)
+                    }
+                }
             }
-        } catch (e : Exception) {
-            // error
         }
-        return null
+        return fragments
+    }
+
+    private fun loadCoordinates(file : File) : List<Coordinate> {
+        val coords = mutableListOf<Coordinate>()
+        var sequence : Int = 1
+        file.forEachLine {
+            val strCoords = it.split(",")
+            if (strCoords.size == 2) {
+                val longitude = strCoords[1].toDouble()
+                val latitude = strCoords[0].toDouble()
+                coords.add(Coordinate(-1, longitude, latitude, sequence))
+                sequence ++
+            }
+        }
+        return coords
     }
 
     private fun openNewDialog() {
