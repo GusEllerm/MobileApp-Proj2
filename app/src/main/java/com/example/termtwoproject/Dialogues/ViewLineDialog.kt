@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.termtwoproject.R
 import java.lang.ClassCastException
+import java.util.Collections.max
 
 class ViewLineDialog: AppCompatDialogFragment() {
 
@@ -27,14 +28,18 @@ class ViewLineDialog: AppCompatDialogFragment() {
         val bundle: Bundle? = arguments
         val fragments = bundle?.getIntegerArrayList("fragments")
         val currentFragment = bundle?.getInt("currentFragment")
+        val viewFragments = bundle?.getIntegerArrayList("viewFragments")
+        val checkboxes = mutableListOf<CheckBox>()
+        val selectedFragments = ArrayList<Int>()
+        var unselectedFragments = mutableListOf<Int>()
 
         for (fragment in fragments.orEmpty()) {
             val checkbox: CheckBox = CheckBox(context)
+            checkboxes.add(checkbox)
             checkbox.text = "Line ${fragment.toString()}"
-            if (fragment == currentFragment) {
+            if (viewFragments!!.contains(fragment)) {
                 Log.d("HERE", "$fragment $currentFragment")
                 checkbox.isChecked = true
-                checkbox.isClickable = false
             }
             checkbox.gravity = 1
 
@@ -52,7 +57,17 @@ class ViewLineDialog: AppCompatDialogFragment() {
             })
             .setPositiveButton("View", object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    dialogListener.viewFragment()
+                    for (checkbox in checkboxes) {
+                        if (checkbox.isChecked) {
+                            selectedFragments.add(Character.getNumericValue(checkbox.text[checkbox.text.lastIndex]))
+                        }
+                    }
+                    for (frag in viewFragments.orEmpty()) {
+                        if (!selectedFragments.contains(frag)){
+                            unselectedFragments.add(frag)
+                        }
+                    }
+                    dialogListener.viewFragment(selectedFragments, unselectedFragments)
                 }
             })
         return builder.create()
@@ -70,6 +85,6 @@ class ViewLineDialog: AppCompatDialogFragment() {
     }
 
     interface ViewLineDialogListener {
-        fun viewFragment()
+        fun viewFragment(selectedFragments: MutableList<Int>, unselectedFragments: MutableList<Int>)
     }
 }
