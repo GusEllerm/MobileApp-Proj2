@@ -1,11 +1,8 @@
 package com.example.termtwoproject
 
-import android.net.Uri
+
 import android.os.AsyncTask
-import com.example.termtwoproject.models.Coordinate
-import com.example.termtwoproject.models.Fragment
 import com.example.termtwoproject.models.GpsMap
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedInputStream
 import java.net.HttpURLConnection
@@ -34,9 +31,12 @@ class MapDownloader(val callback : (GpsMap) -> Unit): AsyncTask<URL, Void, GpsMa
         try {
             val json = BufferedInputStream(connection.inputStream).readBytes().toString(Charset.defaultCharset())
             return JSONObject(json)
+        } catch (e : Exception) {
+            //Error a toast?
         } finally {
             connection.disconnect()
         }
+        return JSONObject(AppConstants.ERROR_JSON_STRING_GPSMAP)
     }
 
 

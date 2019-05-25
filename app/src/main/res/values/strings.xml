@@ -40,4 +40,16 @@
     <string name="uploadFragmentAmount">Fragment amount : %d</string>
     <string name="uploadButton">Upload drawing</string>
     <string name="uploadPreview">Map preview</string>
+
+
+    <string name="toast_error_parsing_map">Unable to create a map object.</string>
+    <string name="toast_success_uploading_map">Successfully uploaded map!</string>
+    <string name="toast_error_uploading_map">Unable to upload map.</string>
+    <string name="toast_max_lines">You can\'t have more than 9 lines!</string>
+    <string name="toast_view_fragments">View x fragments.</string>
+    <string name="toast_error_deleting_last_line">You can\'t delete the last line! If you want to delete the drawing please do so from the list.</string>
+    <string name="toast_recording_stopped">Recording stopped</string>
+    <string name="toast_line_created">Line %d has been created.</string>
+    <string name="toast_line_edit">Editing line: %d</string>
+    <string name="toast_fragment_selected">%d was selected.</string>
 </resources>

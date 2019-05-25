@@ -22,4 +22,11 @@ object AppConstants {
     const val GPS_LIST_END = "$GPS_END/list"
 
     const val GPS_VOTE_END = "$GPS_END/vote"
+
+    const val ERROR_JSON_STRING_OBJECT = "{ id : -1 }"
+
+    const val ERROR_JSON_STRING_ARRAY = "[]"
+
+    const val ERROR_JSON_STRING_GPSMAP = "{ id : -1, mapType : \"Normal\", mapTitle : \"Error downloading\", " +
+            "fragmentAmount : 0, votes : -1, category : \"Error\", imageData : \"\", fragments : []}"
 }

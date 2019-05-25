@@ -114,7 +114,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         if (recordLocation) {
             // If recording stop
             startRecordingButton.performClick()
-            Toast.makeText(this, "Recording Stopped", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_recording_stopped), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -134,12 +134,11 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             // reoder and rename the remaining files so they are sequential 1 - 10
             filesRenameReorder(fragNum)
             updateLineNum() // For UI
-
-            Toast.makeText(this, "$fragNum was selected", Toast.LENGTH_SHORT).show()
+            val text = String.format(getString(R.string.toast_fragment_selected), fragNum)
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
         } else {
             Log.d("Fragment amount", "There are ${getFragmentNames().size} fragments in this drawing")
-            Toast.makeText(this, "You cant delete the last line! If you want to delete the drawing please do so " +
-                    "from the list", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_error_deleting_last_line), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -171,7 +170,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             }
         }
         // The currentfragment should always be selected - and not be unselectable
-        Toast.makeText(this, "View x fragments", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.toast_view_fragments), Toast.LENGTH_SHORT).show()
     }
 
     override fun newFragment() {
@@ -183,9 +182,10 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                 makeFileStructure(true)
             } finally {
                 val currentFrags = getFragmentNames()
+                val text = String.format(getString(R.string.toast_line_created), currentFrags[currentFrags.lastIndex].toInt())
                 Toast.makeText(
                     this,
-                    "Line ${currentFrags[currentFrags.lastIndex].toInt()} has been created",
+                    text,
                     Toast.LENGTH_SHORT
                 ).show()
                 currentFragment = "${currentFrags[currentFrags.lastIndex]}.txt" // Set currentfragment to new fragment
@@ -193,7 +193,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             }
         } else {
             Log.d("Fragment amount", "There are ${getFragmentNames().size} fragments")
-            Toast.makeText(this, "You cant have more than 9 lines!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_max_lines), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -201,7 +201,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         stopRecording()
         currentFragment = "$fragNumber.txt"
         updateLineNum()
-        Toast.makeText(this, "Editing line: $fragNumber", Toast.LENGTH_SHORT).show()
+        val text = String.format(getString(R.string.toast_line_edit), fragNumber)
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 
     override fun uploadGpsMap(gpsMap : GpsMap?) {
@@ -211,9 +212,14 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             val model = PostModel(url, gpsMap, false, "POST")
             MapApiHandler {
                 // id of new item maybe store it in database?
+                if (it >= 0) {
+                    Toast.makeText(this, getString(R.string.toast_success_uploading_map), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, getString(R.string.toast_error_uploading_map), Toast.LENGTH_SHORT).show()
+                }
             }.execute(model)
         } else {
-            // TODO error message?
+           Toast.makeText(this, getString(R.string.toast_error_parsing_map), Toast.LENGTH_LONG).show()
         }
     }
 

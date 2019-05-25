@@ -40,6 +40,16 @@
     <string name="uploadMapType">Map type : %s</string>
     <string name="uploadFragmentAmount">Fragment aantal : %d</string>
     <string name="uploadButton">Upload tekening</string>
-    <string name="uploadPreview">Map voorvertoning
-    </string>
+    <string name="uploadPreview">Map voorvertoning</string>
+
+    <string name="toast_error_parsing_map">Kan geen map object maken.</string>
+    <string name="toast_success_uploading_map">Tekening is geüpload!</string>
+    <string name="toast_error_uploading_map">Kan niet tekening uploaden.</string>
+    <string name="toast_max_lines">Je kan niet meer dan 9 lijnen hebben.</string>
+    <string name="toast_view_fragments">Bekijk x fragmenten.</string>
+    <string name="toast_error_deleting_last_line">Je kan niet de laatste lijn verwijderen! Als je de tekening wilt te verwijderen, doe dat dan via de tekening list.</string>
+    <string name="toast_recording_stopped">Opnemen gestopt</string>
+    <string name="toast_line_created">Lijn %d is gemaakt.</string>
+    <string name="toast_line_edit">Bewerk lijn: %d</string>
+    <string name="toast_fragment_selected">%d is geselecteerd.</string>
 </resources>

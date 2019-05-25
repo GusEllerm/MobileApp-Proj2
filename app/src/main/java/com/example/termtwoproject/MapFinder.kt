@@ -28,9 +28,12 @@ class MapFinder(val callback : (List<Int>) -> Unit): AsyncTask<URL, Void, List<I
         try {
             val json = BufferedInputStream(connection.inputStream).readBytes().toString(Charset.defaultCharset())
             return JSONArray(json)
-        } finally {
-            connection.disconnect()
-        }
+            } catch (e: Exception) {
+                //error maybe a toast later?
+            } finally {
+                connection.disconnect()
+            }
+        return JSONArray(AppConstants.ERROR_JSON_STRING_ARRAY)
     }
 
 
