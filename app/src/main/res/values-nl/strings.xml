@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TermTwoProject</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_draw">Map</string>
+    <string name="ToDrawActivity">Begin met tekenen</string>
+
+
+    <string name="drawings_button">Mijn tekeningen</string>
+    <string name="home_title">Term 2 Project</string>
+    <string name="drawing_name">Tekening naam</string>
+    <string name="line_colour">Lijn kleur</string>
+    <string name="map_type">Map type</string>
+    <string name="start_drawing">Begin tekening</string>
+    <string name="title_drawing_list">Tekeningen</string>
+    <string name="title_drawing_detail">Tekening details</string>
+    <string name="title_activity_global_drawings">Online tekeningen</string>
+    <string name="global_drawings">Online tekeningen</string>
+    <string name="add_vote">Stem</string>
+    <string name="remove_vote">Verwijder Stem</string>
+
+    <string-array name="drawing_spinner">
+        <item>Nieuw</item>
+        <item>Bekijk</item>
+        <item>Aanpassen</item>
+        <item>Verwijder</item>
+        <item>Upload</item>
+    </string-array>
+    <string name="menu_item_new">Nieuw</string>
+    <string name="menu_item_edit">Aanpassen</string>
+    <string name="menu_item_delete">Verwijder</string>
+    <string name="menu_item_view">Bekijk</string>
+    <string name="menu_item_upload">Upload</string>
+    <string name="drawing_activity_buttonStateTrue">Stop met opnemen</string>
+    <string name="drawing_activity_buttonStateFalse">Voeg aan lijn toe</string>
+
+
+    <string name="uploadTitle">Titel : %s</string>
+    <string name="uploadCategory">Categorie : %s</string>
+    <string name="uploadMapType">Map type : %s</string>
+    <string name="uploadFragmentAmount">Fragment aantal : %d</string>
+    <string name="uploadButton">Upload tekening</string>
+    <string name="uploadPreview">Map voorvertoning
+    </string>
+</resources>
