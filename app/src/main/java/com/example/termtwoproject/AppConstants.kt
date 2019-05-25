@@ -25,6 +25,8 @@ object AppConstants {
 
     const val ERROR_JSON_STRING_OBJECT = "{ id : -1 }"
 
+    const val ERROR_JSON_STRING_VOTED = "{ votes : -1 }"
+
     const val ERROR_JSON_STRING_ARRAY = "[]"
 
     const val ERROR_JSON_STRING_GPSMAP = "{ id : -1, mapType : \"Normal\", mapTitle : \"Error downloading\", " +

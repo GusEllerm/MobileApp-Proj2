@@ -16,14 +16,17 @@ class MapApiHandler(val callback : (Int) -> Unit): AsyncTask<PostModel, Void, In
     override fun doInBackground(vararg model : PostModel): Int {
         val m = model.first()
         var result : JSONObject
+        var returnInt : Int
         if (m.vote) {
             // method is a adding or removing a vote
             result = voteOnMap(m.url, m.method)
+            returnInt = result.getInt("votes")
         } else {
             // method is for saving or updating a gps map
             result = postOrPatchMap(m)
+            returnInt = result.getInt("id")
         }
-        return result.getInt("id")
+        return returnInt
     }
 
 
@@ -43,7 +46,7 @@ class MapApiHandler(val callback : (Int) -> Unit): AsyncTask<PostModel, Void, In
         } catch (e : Exception) {
             //toast error?
         }
-        return JSONObject(AppConstants.ERROR_JSON_STRING_OBJECT)
+        return JSONObject(AppConstants.ERROR_JSON_STRING_VOTED)
     }
 
     private fun postOrPatchMap(model : PostModel) : JSONObject {
