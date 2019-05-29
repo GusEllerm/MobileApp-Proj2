@@ -1,5 +1,7 @@
 package com.maptionary.application
 
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMapOptions
 
 
 object AppConstants {
@@ -9,6 +11,10 @@ object AppConstants {
 
 
     val MAP_TYPES = listOf("Normal", "Satellite", "Hybrid", "Terrain")
+    val MAP_TYPES_MAP = mapOf<String, Int>("Normal" to GoogleMap.MAP_TYPE_NORMAL,
+        "Satellite" to GoogleMap.MAP_TYPE_SATELLITE,
+        "Hybrid" to GoogleMap.MAP_TYPE_HYBRID,
+        "Terrain" to GoogleMap.MAP_TYPE_TERRAIN)
 
     val ORDER_TYPES = mapOf("Most recent" to "newest", "Least recent" to "oldest", "Most votes" to "most_votes", "Least votes" to "least_votes")
 

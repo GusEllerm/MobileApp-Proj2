@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity() {
             database.drawingDao().insert(
                 Drawing(
                     title = "Test$rnds",
-                    lineColor = "Red",
                     mapType = "testmaptype",
                     folderName = "TestFolder",
                     category = "1"

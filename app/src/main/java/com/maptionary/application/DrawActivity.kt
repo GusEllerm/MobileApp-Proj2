@@ -10,6 +10,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import androidx.core.app.ActivityCompat
 //import android.util.Log
 import android.view.Menu
@@ -32,7 +33,7 @@ import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.maps.model.JointType.ROUND
-import com.google.android.material.snackbar.Snackbar
+import com.maptionary.application.AppConstants.MAP_TYPES_MAP
 import org.apache.commons.io.FilenameUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -85,7 +86,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
 
         startRecordingButton = findViewById(R.id.StartRecording)
-        startRecordingButton.setOnClickListener { view ->
+        startRecordingButton.setOnClickListener { _ ->
             when (recordLocation) {
                 true -> {
                     recordLocation = false
@@ -96,17 +97,14 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                     startRecordingButton.text = resources.getString(R.string.drawing_activity_buttonStateTrue)
                 }
             }
-
-            Snackbar.make(view, "This happened", Snackbar.LENGTH_SHORT)
-                .setAction("Action", null)
-                .show()
         }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
     }
 
     private fun updateLineNum() {
-        line_sig.text = "Line ${currentFragment[0]}"
+        val text = "Line ${currentFragment[0]}"
+        line_sig.text = text
     }
 
     private fun stopRecording() {
@@ -164,8 +162,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 //            Log.d("asd", "THIS HERE ${unselectedFragments[0]}")
             // Need to get rid of line from drawing
             for (unselectedLine in unselectedFragments) {
-//                Log.d("asd", "THIS HERE $unselectedLine")
-                polylines[unselectedLine]?.remove()
+                current_polylines[unselectedLine]?.remove()
+                current_polylines.remove(unselectedLine)
             }
         }
         // The currentfragment should always be selected - and not be unselectable
@@ -234,8 +232,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     }
 
     private fun openDeleteDialog() {
-        val dialog: DeleteLineDialog = DeleteLineDialog()
-        var bundle: Bundle = Bundle()
+        val dialog = DeleteLineDialog()
+        val bundle = Bundle()
         val fragments = ArrayList<Int>()
         for (fragment in getFragmentNames()) {
             fragments.add(fragment.toInt())
@@ -246,26 +244,26 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     }
 
     private fun openViewDialog() {
-        val dialog: ViewLineDialog = ViewLineDialog()
-        var bundle: Bundle = Bundle()
+        val dialog = ViewLineDialog()
+        val bundle = Bundle()
         val fragments = ArrayList<Int>()
         for (fragment in getFragmentNames()) {
             fragments.add(fragment.toInt())
         }
         bundle.putIntegerArrayList("fragments", fragments)
-        var viewFragments_intArray = arrayListOf<Int>()
+        val viewFragmentsIntArray = arrayListOf<Int>()
         for (item in viewFragments) {
-            viewFragments_intArray.add(item)
+            viewFragmentsIntArray.add(item)
         }
-        bundle.putIntegerArrayList("viewFragments", viewFragments_intArray)
+        bundle.putIntegerArrayList("viewFragments", viewFragmentsIntArray)
         bundle.putInt("currentFragment", Character.getNumericValue(currentFragment[0]))
         dialog.arguments = bundle
         dialog.show(supportFragmentManager, "View Lines")
     }
 
     private fun openEditDialog() {
-        val dialog: EditLineDialog = EditLineDialog()
-        var bundle: Bundle = Bundle()
+        val dialog  = EditLineDialog()
+        val bundle = Bundle()
         val fragments = ArrayList<Int>()
         for (fragment in getFragmentNames()) {
             fragments.add(fragment.toInt())
@@ -281,7 +279,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         val bundle = Bundle()
         val fragments = loadFragments()
         val gpsMap = GpsMap(-1, drawing.title, drawing.mapType, fragments.size,
-            drawing.category.toString(), 0, fragments, "")
+            drawing.category, 0, fragments, "")
 
 
         val width = resources.displayMetrics.widthPixels
@@ -333,7 +331,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     private fun loadCoordinates(file : File) : List<Coordinate> {
         val coords = mutableListOf<Coordinate>()
-        var sequence : Int = 1
+        var sequence = 1
         file.forEachLine {
             val strCoords = it.split(",")
             if (strCoords.size == 2) {
@@ -347,7 +345,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     }
 
     private fun openNewDialog() {
-        val dialog: CreateNewLineDialog = CreateNewLineDialog()
+        val dialog = CreateNewLineDialog()
         dialog.show(supportFragmentManager, "New Line")
     }
 
@@ -468,7 +466,6 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     private fun makedirectory() {
         if (!directoryExists()) {
-//            Log.d("Directory creation", "${drawing.folderName} Created")
             val file = File(applicationContext.filesDir, drawing.folderName)
             file.mkdir()
 
@@ -476,7 +473,6 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             // If it is the first fragment its path is
             currentFragment = "1.txt"
             updateLineNum() // Update UI
-//            Log.d("Fragment path", "Current path is $currentFragmentPath$currentFragment")
             makefile()
         } else {
 //            Log.d("Directory Exists", "Directory already exists")
@@ -485,9 +481,6 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     private fun makefile() {
         if (!fileExist()) {
-            //If the file does not exist at launch, create it
-//            Log.d("File Creation", "$currentFragmentPath Created")
-//            Log.d("Trying to make file", "File name = ${applicationContext.filesDir}$currentFragmentPath")
             val file = File("${applicationContext.filesDir}$currentFragmentPath", currentFragment)
             file.createNewFile()
         } else {
@@ -563,30 +556,36 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     private fun displayCoords() {
         // Takes each line in file, converts it to a LatLng object and passes it into a list
 
-//        Log.d("This ran", "${viewFragments[0]}")
         for (fragment in getFragmentNames()) {
-            var fragment_int = fragment.toInt()
+            val fragment_int = fragment.toInt()
             if (viewFragments.contains(fragment_int)) {
-                val current_file = File("${applicationContext.filesDir}$currentFragmentPath", "$fragment.txt")
+                val currentFile = File("${applicationContext.filesDir}$currentFragmentPath", "$fragment.txt")
                 val list: MutableList<LatLng> = ArrayList()
-                current_file.forEachLine {
+                currentFile.forEachLine {
                     val (lat, lng) = it.split(",")
                     val value = LatLng(lat.toDouble(), lng.toDouble())
                     list.add(value)
                 }
 
-                // Set up polyline options
-                val polylineOptions = PolylineOptions()
-                    .addAll(list)
-                    .geodesic(true)
-                    .color(Color.BLUE)
-                    .width(30f)
-                    .jointType(ROUND)
-                // Apply line to map
-                val polyline = map.addPolyline(polylineOptions)
                 // add polyline to map so we can get rid of it when we dont want to view it
-//                Log.d("asd", "THIS HERE, $fragment_int")
-                polylines[fragment_int] = polyline
+                Log.d("test", "///////////////////////////////////////////////////////////////")
+                current_polylines.forEach { Log.d("test", ("${it.key} ${it.value}")) }
+                Log.d("test", "///////////////////////////////////////////////////////////////")
+
+                if (current_polylines[fragment_int] == null) {
+                    val polylineOptions = PolylineOptions()
+                        .addAll(list)
+                        .geodesic(true)
+                        .color(Color.BLUE)
+                        .width(30f)
+                        .jointType(ROUND)
+                    // Apply line to map
+                    val polyline = map.addPolyline(polylineOptions)
+
+                    // add polyline to map
+                    current_polylines[fragment_int] = polyline
+                }
+
             }
         }
     }
@@ -609,9 +608,9 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     private fun getDrawing(database: DrawingsDatabase) {
         //TODO - I am cheating here, the database calls are happining on the main thread - this needs to be fixed
         drawing = database.drawingDao().getDrawingById(drawingID)
-//        Log.d("Drawing Loaded", "${drawing.title} has been successfully retrieved")
 
         // Everything is ready to set map up
+        //TODO - make sure that this runs after drawing is set
         setUpMap()
     }
 
@@ -640,8 +639,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         map.isMyLocationEnabled = true
 
         // ----------------- user preference: the map type should be changeable from preferences -------------//
-        map.mapType = GoogleMap.MAP_TYPE_TERRAIN
-
+        map.mapType = MAP_TYPES_MAP[drawing.mapType]!!.toInt()
         // get last known location
         fusedLocationClient.lastLocation.addOnSuccessListener(this) {location ->
             if (location != null) {
@@ -661,7 +659,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         private const val REQUEST_CHECK_SETTINGS = 2
         private var recordLocation = false
         private var viewFragments = mutableListOf<Int>()
-        private var polylines = mutableMapOf<Int, Polyline>()
+        private var current_polylines = mutableMapOf<Int, Polyline>()
     }
 
 }

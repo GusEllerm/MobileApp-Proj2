@@ -28,11 +28,6 @@ class DrawSettingsActivity : AppCompatActivity() {
             R.layout.support_simple_spinner_dropdown_item,
             AppConstants.MAP_TYPES)
 
-        val lineColorSpinner = findViewById<Spinner>(R.id.lineColorSpinner)
-        lineColorSpinner.adapter = ArrayAdapter(this,
-            R.layout.support_simple_spinner_dropdown_item,
-            AppConstants.COLOURS)
-
         val drawingNameField = findViewById<EditText>(R.id.drawingNameField)
 
         val startDrawingButton = findViewById<Button>(R.id.startDrawingButton)
@@ -43,7 +38,6 @@ class DrawSettingsActivity : AppCompatActivity() {
                     Drawing(
                         title = drawingNameField.text.toString(),
                         mapType = mapTypeSpinner.selectedItem.toString(),
-                        lineColor = lineColorSpinner.selectedItem.toString(),
                         folderName = drawingNameField.text.toString() + "_folder",
                         category = "0"
                     )

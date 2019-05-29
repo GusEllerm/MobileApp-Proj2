@@ -52,4 +52,7 @@
     <string name="toast_line_created">Line %d has been created.</string>
     <string name="toast_line_edit">Editing line: %d</string>
     <string name="toast_fragment_selected">%d was selected.</string>
+    <string name="drawing_settings_activity">Drawing Settings</string>
+    <string name="drawing_activity">Drawing</string>
+    <string name="main_menu_activity">Maptionary</string>
 </resources>

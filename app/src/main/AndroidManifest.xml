@@ -51,7 +51,7 @@
 
         <activity
                 android:name="com.maptionary.application.DrawActivity"
-                android:label="@string/title_activity_draw">
+                android:label="@string/drawing_activity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.maptionary.application.HomeActivity"/>
@@ -70,7 +70,7 @@
         </activity>
         <activity
                 android:name="com.maptionary.application.HomeActivity"
-                android:label="@string/home_title">
+                android:label="@string/main_menu_activity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.maptionary.application.MainActivity"/>
@@ -81,7 +81,7 @@
         </activity>
         <activity
                 android:name="com.maptionary.application.DrawSettingsActivity"
-                android:label="@string/home_title">
+                android:label="@string/drawing_settings_activity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.maptionary.application.DrawSettingsActivity"/>

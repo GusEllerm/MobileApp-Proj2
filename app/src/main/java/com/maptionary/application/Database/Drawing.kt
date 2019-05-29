@@ -8,6 +8,5 @@ import androidx.room.PrimaryKey
 class Drawing(@PrimaryKey(autoGenerate = true) var id: Long = 0,
     @ColumnInfo(name = "title") var title: String,
     @ColumnInfo(name = "map_type") var mapType: String,
-    @ColumnInfo(name = "line_color") var lineColor: String,
     @ColumnInfo(name = "folder_name") var folderName: String,
     @ColumnInfo(name = "category") var category: String)

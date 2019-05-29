@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.maptionary.application.R
 import java.lang.ClassCastException
@@ -52,7 +53,11 @@ class DeleteLineDialog: AppCompatDialogFragment() {
             })
             .setPositiveButton("Delete", object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    dialogListner.deleteFragment(deleteFragment)
+                    if (::deleteFragment.isInitialized) {
+                        dialogListner.deleteFragment(deleteFragment)
+                    } else {
+                        Toast.makeText(context, "Please select a fragment to delete", Toast.LENGTH_LONG).show()
+                    }
                 }
             })
         return builder.create()
