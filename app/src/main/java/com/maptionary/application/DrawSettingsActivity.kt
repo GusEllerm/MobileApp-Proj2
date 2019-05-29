@@ -45,7 +45,7 @@ class DrawSettingsActivity : AppCompatActivity() {
                         mapType = mapTypeSpinner.selectedItem.toString(),
                         lineColor = lineColorSpinner.selectedItem.toString(),
                         folderName = drawingNameField.text.toString() + "_folder",
-                        category = 0
+                        category = "0"
                     )
                 )
 

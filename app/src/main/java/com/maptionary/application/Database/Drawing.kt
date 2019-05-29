@@ -10,4 +10,4 @@ class Drawing(@PrimaryKey(autoGenerate = true) var id: Long = 0,
     @ColumnInfo(name = "map_type") var mapType: String,
     @ColumnInfo(name = "line_color") var lineColor: String,
     @ColumnInfo(name = "folder_name") var folderName: String,
-    @ColumnInfo(name = "category") var category: Int)
+    @ColumnInfo(name = "category") var category: String)

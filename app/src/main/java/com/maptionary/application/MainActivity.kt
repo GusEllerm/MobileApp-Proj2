@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                     lineColor = "Red",
                     mapType = "testmaptype",
                     folderName = "TestFolder",
-                    category = 1
+                    category = "1"
                 )
             )
             Toast.makeText(this, "item added", Toast.LENGTH_LONG).show()
