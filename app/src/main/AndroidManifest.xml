@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="com.example.termtwoproject">
+          xmlns:tools="http://schemas.android.com/tools" package="com.maptionary.application">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -19,22 +19,22 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning">
         <activity
-                android:name=".DrawingListDetailActivity.DrawingListActivity"
+                android:name="com.maptionary.application.DrawingListDetailActivity.DrawingListActivity"
                 android:label="@string/title_drawing_list"
-                android:parentActivityName=".HomeActivity"
+                android:parentActivityName="com.maptionary.application.HomeActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.termtwoproject.HomeActivity"/>
+                    android:value="com.maptionary.application.HomeActivity"/>
         </activity>
         <activity
-                android:name=".DrawingListDetailActivity.DrawingDetailActivity"
+                android:name="com.maptionary.application.DrawingListDetailActivity.DrawingDetailActivity"
                 android:label="@string/title_drawing_detail"
-                android:parentActivityName=".DrawingListDetailActivity.DrawingListActivity"
+                android:parentActivityName="com.maptionary.application.DrawingListDetailActivity.DrawingListActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.termtwoproject.DrawingListDetailActivity.DrawingListActivity"/>
+                    android:value="com.maptionary.application.DrawingListDetailActivity.DrawingListActivity"/>
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -50,42 +50,41 @@
         <!--<meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts"/>-->
 
         <activity
-                android:name=".DrawActivity"
+                android:name="com.maptionary.application.DrawActivity"
                 android:label="@string/title_activity_draw">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.termtwoproject.HomeActivity"/>
+                    android:value="com.maptionary.application.HomeActivity"/>
         </activity>
         <activity
-                android:name=".GlobalDrawingsActivity"
+                android:name="com.maptionary.application.GlobalDrawingsActivity"
                 android:label="@string/title_activity_global_drawings">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.termtwoproject.HomeActivity"/>
+                    android:value="com.maptionary.application.HomeActivity"/>
         </activity>
         <activity
-                android:name=".MainActivity"
+                android:name="com.maptionary.application.MainActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+                android:name="com.maptionary.application.HomeActivity"
+                android:label="@string/home_title">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.maptionary.application.MainActivity"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-                android:name=".HomeActivity"
+                android:name="com.maptionary.application.DrawSettingsActivity"
                 android:label="@string/home_title">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"/>
-        </activity>
-        <activity
-                android:name=".DrawSettingsActivity"
-                android:label="@string/home_title">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".DrawSettingsActivity"/>
+                    android:value="com.maptionary.application.DrawSettingsActivity"/>
         </activity>
     </application>
 
