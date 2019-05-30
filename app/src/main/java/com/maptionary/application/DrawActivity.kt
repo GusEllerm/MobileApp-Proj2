@@ -118,24 +118,31 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     override fun deleteFragment(fragNumber: String) {
         stopRecording()
         // TODO - make it so you cant delete the line you are currently editing
-        if (getFragmentNames().size > 1) {
-            val fragNum = fragNumber.takeLast(1).toInt()
-            val fileToDelete = File("${applicationContext.filesDir}$currentFragmentPath", "$fragNum.txt")
 
-            try {
-                fileToDelete.delete()
-            } catch (e: Exception) {
-                //TODO - what if the file cant be deleted?
-            }
+        val fragNum = fragNumber.takeLast(1).toInt()
 
-            // reoder and rename the remaining files so they are sequential 1 - 10
-            filesRenameReorder(fragNum)
-            updateLineNum() // For UI
-            val text = String.format(getString(R.string.toast_fragment_selected), fragNum)
-            Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
-        } else {
+        if (fragNum.toString() != currentFragment[0].toString()) {
+            if (getFragmentNames().size > 1) {
+                val fileToDelete = File("${applicationContext.filesDir}$currentFragmentPath", "$fragNum.txt")
+
+                try {
+                    fileToDelete.delete()
+                } catch (e: Exception) {
+                    //TODO - what if the file cant be deleted?
+                }
+
+                // reoder and rename the remaining files so they are sequential 1 - 10
+                filesRenameReorder(fragNum)
+                updateLineNum() // For UI
+                val text = String.format(getString(R.string.toast_fragment_selected), fragNum)
+                Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+            } else {
 //            Log.d("Fragment amount", "There are ${getFragmentNames().size} fragments in this drawing")
-            Toast.makeText(this, getString(R.string.toast_error_deleting_last_line), Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.toast_error_deleting_last_line), Toast.LENGTH_LONG).show()
+            }
+        } else {
+            // Trying to delete the line that they are editing
+            Toast.makeText(this, getString(R.string.toast_deleting_editing_line), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -152,7 +159,9 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                     "${fragment.toInt() - 1}.txt"))
             }
         }
-
+        if (currentFragment[0].toInt() > removedItem) {
+            currentFragment = "${currentFragment[0].toString().toInt() - 1}.txt"
+        }
     }
 
     override fun viewFragment(selectedFragments: MutableList<Int>, unselectedFragments: MutableList<Int>) {
@@ -281,6 +290,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         val gpsMap = GpsMap(-1, drawing.title, drawing.mapType, fragments.size,
             drawing.category, 0, fragments, "")
 
+
+        // TODO - App crashes if there are no points in drawing to upload
 
         val width = resources.displayMetrics.widthPixels
         val height = resources.displayMetrics.heightPixels
@@ -422,7 +433,6 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             makedirectory()
         } else {
             val fragments = getFragmentNames()
-            // TODO may need to reorganise the file names if a fragment has been deleted
             // EG fragments 123 - 2 gets deleted = 13, max = 3 next frag = 4. should be max = 2 next frag = 3
             // Add a new file if asked - if from another activity just start editing the last line
             val lastFragment: Int
@@ -586,6 +596,23 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                     current_polylines[fragment_int] = polyline
                 }
 
+                // Update the current line that you are editing
+                if (fragment == currentFragment[0].toString()) {
+                    current_polylines[fragment_int]?.remove()
+                    current_polylines.remove(fragment_int)
+
+                    val polylineOptions = PolylineOptions()
+                        .addAll(list)
+                        .geodesic(true)
+                        .color(Color.BLUE)
+                        .width(30f)
+                        .jointType(ROUND)
+                    // Apply line to map
+                    val polyline = map.addPolyline(polylineOptions)
+
+                    // add polyline to map
+                    current_polylines[fragment_int] = polyline
+                }
             }
         }
     }

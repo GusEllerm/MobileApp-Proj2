@@ -34,6 +34,7 @@ class EditLineDialog: AppCompatDialogFragment() {
             edit_radio_group?.addView(radioButton)
             if (fragment == currentFragment) {
                 radioButton.isChecked = true
+                fragNumber = radioButton.text[radioButton.text.lastIndex].toString()
             }
             radioButton.setOnClickListener { fragNumber = radioButton.text[radioButton.text.lastIndex].toString() }
         }
