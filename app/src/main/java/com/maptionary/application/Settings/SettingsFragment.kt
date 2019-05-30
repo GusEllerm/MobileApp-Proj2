@@ -1,14 +1,9 @@
-package com.maptionary.application
+package com.maptionary.application.Settings
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.preference.PreferenceFragment
 import androidx.preference.PreferenceFragmentCompat
+import com.maptionary.application.R
 
 
 class SettingsFragment : PreferenceFragmentCompat() {

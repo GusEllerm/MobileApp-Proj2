@@ -19,7 +19,7 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SettingsActivity">
+        <activity android:name=".Settings.SettingsActivity">
         </activity>
         <activity
                 android:name=".DrawingListDetailActivity.DrawingListActivity"

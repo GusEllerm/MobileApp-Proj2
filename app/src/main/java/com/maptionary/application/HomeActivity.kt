@@ -11,6 +11,7 @@ import android.widget.Button
 import androidx.room.Room
 import com.maptionary.application.Database.DrawingsDatabase
 import com.maptionary.application.DrawingListDetailActivity.DrawingListActivity
+import com.maptionary.application.Settings.SettingsActivity
 
 
 class HomeActivity : AppCompatActivity() {

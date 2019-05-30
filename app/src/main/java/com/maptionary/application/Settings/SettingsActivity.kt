@@ -1,23 +1,22 @@
-package com.maptionary.application
+package com.maptionary.application.Settings
 
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.widget.Toast
-import kotlinx.android.synthetic.main.drawing_list_content.view.*
 
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportFragmentManager.beginTransaction()
-            .replace(android.R.id.content,  SettingsFragment())
+            .replace(android.R.id.content, SettingsFragment())
             .commit()
 
 
         val sharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val darkModeBool: Boolean = sharedPrefs.getBoolean(SettingsActivity.DARK_MODE_SWITCH, false)
+        val darkModeBool: Boolean = sharedPrefs.getBoolean(DARK_MODE_SWITCH, false)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
