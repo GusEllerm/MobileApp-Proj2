@@ -45,10 +45,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
     implementation 'com.google.gms:google-services:4.2.0'
 
-    ext.anko_version='0.10.8'
+    ext.anko_version = '0.10.8'
     implementation "org.jetbrains.anko:anko:$anko_version"
     implementation 'commons-io:commons-io:2.6'
 
     def lottieVersion = "3.0.3-support"
     implementation "com.airbnb.android:lottie:$lottieVersion"
+    implementation "com.android.support:preference-v7:28.0.1"
 }
