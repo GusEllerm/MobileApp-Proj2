@@ -2,6 +2,7 @@ package com.maptionary.application.DrawingListDetailActivity
 
 import android.graphics.Color
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
+import com.maptionary.application.R
 import com.maptionary.application.models.Coordinate
 import com.maptionary.application.models.GpsMap
 import org.apache.commons.io.FilenameUtils
@@ -82,6 +84,11 @@ class DrawingDetailFragment : Fragment(), OnMapReadyCallback {
 
 
         try {
+
+            val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val lineColor_string = mSharedPreferences.getString(getString(R.string.color_prefrence), "#2980B9")
+            val lineColor = Color.parseColor(lineColor_string)
+
             val width = resources.displayMetrics.widthPixels
             val height = resources.displayMetrics.heightPixels
             val padding = (width * .10).toInt()
@@ -99,7 +106,7 @@ class DrawingDetailFragment : Fragment(), OnMapReadyCallback {
                 val polylineOptions = PolylineOptions()
                     .addAll(list)
                     .geodesic(true)
-                    .color(Color.BLUE)
+                    .color(lineColor)
                     .width(30f)
                     .jointType(JointType.ROUND)
                 // Apply line to map

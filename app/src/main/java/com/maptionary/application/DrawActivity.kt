@@ -2,6 +2,7 @@ package com.maptionary.application
 
 import android.content.Intent
 import android.content.IntentSender
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,6 +10,7 @@ import android.graphics.Color
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Base64
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -566,6 +568,11 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     private fun displayCoords() {
         // Takes each line in file, converts it to a LatLng object and passes it into a list
 
+        // Set line color to prefrence
+        val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val lineColor_string = mSharedPreferences.getString(getString(R.string.color_prefrence), "#2980B9")
+        val lineColor = Color.parseColor(lineColor_string)
+
         for (fragment in getFragmentNames()) {
             val fragment_int = fragment.toInt()
             if (viewFragments.contains(fragment_int)) {
@@ -586,7 +593,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                     val polylineOptions = PolylineOptions()
                         .addAll(list)
                         .geodesic(true)
-                        .color(Color.BLUE)
+                        .color(lineColor)
                         .width(30f)
                         .jointType(ROUND)
                     // Apply line to map
@@ -604,7 +611,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                     val polylineOptions = PolylineOptions()
                         .addAll(list)
                         .geodesic(true)
-                        .color(Color.BLUE)
+                        .color(lineColor)
                         .width(30f)
                         .jointType(ROUND)
                     // Apply line to map

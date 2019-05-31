@@ -16,11 +16,9 @@ class SettingsActivity : AppCompatActivity() {
 
 
         val sharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val darkModeBool: Boolean = sharedPrefs.getBoolean(DARK_MODE_SWITCH, false)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        Toast.makeText(this, darkModeBool.toString(), Toast.LENGTH_LONG).show()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -28,7 +26,4 @@ class SettingsActivity : AppCompatActivity() {
         return true
     }
 
-    companion object {
-        val DARK_MODE_SWITCH = "darkMode"
-    }
 }

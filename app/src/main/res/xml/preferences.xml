@@ -2,8 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreference
+    <ListPreference
             android:defaultValue="true"
-            android:title="Dark Mode" android:key="darkMode" android:summary="Turn dark mode on"/>
+            android:title="Line Color" android:entries="@array/Colors" android:entryValues="@array/Colors_values"
+            android:key="color_prefrence"/>
 
 </PreferenceScreen>
