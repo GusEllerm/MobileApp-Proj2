@@ -14,7 +14,6 @@ class SettingsActivity : AppCompatActivity() {
             .replace(android.R.id.content, SettingsFragment())
             .commit()
 
-
         val sharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

@@ -1,5 +1,9 @@
 package com.maptionary.application
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.SharedPreferences
@@ -8,6 +12,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.location.Location
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -21,6 +26,8 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.room.Room
 import com.maptionary.application.Database.Drawing
 import com.maptionary.application.Database.DrawingsDatabase
@@ -221,7 +228,36 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             MapApiHandler {
                 // id of new item maybe store it in database?
                 if (it >= 0) {
-                    Toast.makeText(this, getString(R.string.toast_success_uploading_map), Toast.LENGTH_SHORT).show()
+
+                    val not_intent = Intent(this, GlobalDrawingsActivity::class.java)
+                    val not_intent_pending = PendingIntent.getActivity(this, 0, not_intent, 0)
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val name = getString(R.string.channel_name)
+                        val descriptionText = getString(R.string.channel_description)
+                        val importance = NotificationManager.IMPORTANCE_DEFAULT
+                        val channel = NotificationChannel(getString(R.string.channel_name), name, importance).apply {
+                            description = descriptionText
+                        }
+                        // Register the channel with the system
+                        val notificationManager: NotificationManager =
+                            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        notificationManager.createNotificationChannel(channel)
+                    }
+
+                    val builder = NotificationCompat.Builder(this, getString(R.string.channel_name))
+                        .setSmallIcon(R.mipmap.launcher_icon)
+                        .setContentTitle("This worked")
+                        .setContentText(getString(R.string.toast_success_uploading_map))
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(not_intent_pending)
+                        .setAutoCancel(true)
+
+                    with(NotificationManagerCompat.from(this)) {
+                        // notificationId is a unique int for each notification that you must define
+                        notify(R.string.channel_name, builder.build())
+                    }
                 } else {
                     Toast.makeText(this, getString(R.string.toast_error_uploading_map), Toast.LENGTH_SHORT).show()
                 }
