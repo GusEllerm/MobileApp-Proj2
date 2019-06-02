@@ -108,6 +108,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
             }
         }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
     }
 

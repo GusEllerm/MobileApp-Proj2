@@ -3,8 +3,7 @@
                   xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
-            android:defaultValue="true"
             android:title="Line Color" android:entries="@array/Colors" android:entryValues="@array/Colors_values"
-            android:key="color_prefrence"/>
+            android:key="color_prefrence" android:defaultValue="#2980B9"/>
 
 </PreferenceScreen>

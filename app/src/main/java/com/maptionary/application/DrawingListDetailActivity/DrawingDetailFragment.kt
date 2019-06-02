@@ -51,7 +51,6 @@ class DrawingDetailFragment : Fragment(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         val database = Room.databaseBuilder(activity!!.applicationContext, DrawingsDatabase::class.java, "drawings").build()
         val thread = DbWorkerThread("dbWorkerThread")
         thread.start()
@@ -77,6 +76,8 @@ class DrawingDetailFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        PreferenceManager.setDefaultValues(activity, R.xml.preferences, false)
+
         val fragments = loadFragments()
         val frag_names = getFragmentNames()
         val gpsMap = GpsMap(-1, drawing.title, drawing.mapType, fragments.size,
@@ -87,6 +88,7 @@ class DrawingDetailFragment : Fragment(), OnMapReadyCallback {
 
             val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             val lineColor_string = mSharedPreferences.getString(getString(R.string.color_prefrence), "#2980B9")
+            Log.d("Current", lineColor_string)
             val lineColor = Color.parseColor(lineColor_string)
 
             val width = resources.displayMetrics.widthPixels

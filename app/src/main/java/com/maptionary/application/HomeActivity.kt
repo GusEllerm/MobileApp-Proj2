@@ -25,6 +25,8 @@ class HomeActivity : AppCompatActivity() {
 
         val globalDrawingsButton = findViewById<Button>(R.id.globalDrawingsButton)
 
+        // Get rid of back button on home screen
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         // To do background threading make a runnable and execute it with the DbWorkerThread class (it dispatches threads)
         val database = Room.databaseBuilder(applicationContext, DrawingsDatabase::class.java, "drawings").allowMainThreadQueries().build()
@@ -60,9 +62,5 @@ class HomeActivity : AppCompatActivity() {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.menu_main, menu)
         return true
-    }
-
-    companion object {
-        val DARK_MODE_KEY_PREF: String = "darkMode" // id of the pref
     }
 }
