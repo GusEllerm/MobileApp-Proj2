@@ -117,7 +117,6 @@ class DrawingDetailFragment : Fragment(), OnMapReadyCallback {
         } catch (e: IllegalStateException) {
             // No points in file
         }
-
     }
 
     private fun getFragmentNames(): MutableList<String> {
