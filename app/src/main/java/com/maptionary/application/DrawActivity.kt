@@ -3,14 +3,15 @@ package com.maptionary.application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.content.IntentSender
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -49,9 +50,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 import java.util.Collections.max
+import kotlin.math.absoluteValue
 
 
-class DrawActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, CreateNewLineDialog.NewLineDialogListner,
+class DrawActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, CreateNewLineDialog.NewLineDialogListner,
 EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, DeleteLineDialog.DeleteLineDialogListner, UploadLineDialog.UploadLineDialogListener {
 
 
@@ -81,6 +83,15 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
 
     private lateinit var line_sig: TextView
 
+
+    private var mSensorManager : SensorManager? = null
+    private var mAccelerometer : Sensor? = null
+    private var hitBounds : Int = 0
+    private var eventsSinceShake : Int = 0
+    private var totalShakes : Double = 0.0
+
+    private var uploadDialogOpen = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_draw)
@@ -88,6 +99,10 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        mAccelerometer = mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
 
         recordLocation = false
 
@@ -111,6 +126,43 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
     }
+
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event != null && !uploadDialogOpen) {
+            // working with y values for the shake
+            val minAccel : Float = AppConstants.GRAVITY - AppConstants.MAX_ACCELERATION
+            val maxAccel : Float = AppConstants.GRAVITY + AppConstants.MAX_ACCELERATION
+            val curAccel : Float = event.values[1].absoluteValue
+            if (hitBounds != 0) eventsSinceShake += 1
+            if (curAccel < minAccel) {
+                if (hitBounds == 1) totalShakes += 0.5
+                hitBounds = -1
+            }
+            else if (curAccel > maxAccel) {
+                if (hitBounds == -1) totalShakes += 0.5
+                hitBounds = 1
+            }
+            if (totalShakes >= AppConstants.MAX_SHAKES) {
+                // open upload
+                openUploadDialog()
+                hitBounds = 0
+                totalShakes = 0.0
+                eventsSinceShake = 0
+            } else if (eventsSinceShake >= AppConstants.MAX_EVENTS) {
+                // reset
+                hitBounds = 0
+                totalShakes = 0.0
+                eventsSinceShake = 0
+            }
+        }
+    }
+
+
 
     private fun updateLineNum() {
         val text = "Line ${currentFragment[0]}"
@@ -221,8 +273,15 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 
+
+    override fun exitDialog(dialog : DialogInterface?) {
+        dialog?.dismiss()
+        uploadDialogOpen = false
+    }
+
     override fun uploadGpsMap(gpsMap : GpsMap?) {
         stopRecording()
+        uploadDialogOpen = false
         if (gpsMap != null) {
             val url = URL(AppConstants.GPS_END)
             val model = PostModel(url, gpsMap, false, "POST")
@@ -323,20 +382,18 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
     }
 
     private fun openUploadDialog() {
-        val dialog= UploadLineDialog()
+        uploadDialogOpen = true
+        val dialog = UploadLineDialog()
         val bundle = Bundle()
         val fragments = loadFragments()
         val gpsMap = GpsMap(-1, drawing.title, drawing.mapType, fragments.size,
             drawing.category, 0, fragments, "")
 
 
-        // TODO - App crashes if there are no points in drawing to upload
-
         val width = resources.displayMetrics.widthPixels
         val height = resources.displayMetrics.heightPixels
         val padding = (width * .10).toInt()
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(gpsMap.getBounds(), width, height, padding))
-
+        if (fragments.isNotEmpty()) map.animateCamera(CameraUpdateFactory.newLatLngBounds(gpsMap.getBounds(), width, height, padding))
         val callback = GoogleMap.SnapshotReadyCallback {
             if (it != null) {
                 val resizedBitMap = Bitmap.createScaledBitmap(it, 256, 256, false)
@@ -350,6 +407,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
                 bundle.putString("GpsMap", mapAsString)
                 dialog.arguments = bundle
                 dialog.show(supportFragmentManager, "Upload Drawing")
+
             } else {
                 // cant generate snapshot
             }
@@ -665,6 +723,7 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         // Stops the location update requests
         super.onPause()
         fusedLocationClient.removeLocationUpdates(locationCallback)
+        mSensorManager!!.unregisterListener(this)
     }
 
     public override fun onResume() {
@@ -674,6 +733,8 @@ EditLineDialog.EditDialogListener, ViewLineDialog.ViewLineDialogListener, Delete
         if (!locationUpdateState) {
             createLocationRequest()
         }
+        mSensorManager!!.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI)
+
     }
 
     private fun getDrawing(database: DrawingsDatabase) {

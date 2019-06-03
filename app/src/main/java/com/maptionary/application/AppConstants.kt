@@ -37,4 +37,12 @@ object AppConstants {
 
     const val ERROR_JSON_STRING_GPSMAP = "{ id : -1, mapType : \"Normal\", mapTitle : \"Error downloading\", " +
             "fragmentAmount : 0, votes : -1, category : \"Error\", imageData : \"\", fragments : []}"
+
+    const val GRAVITY : Float = 9.81f
+
+    const val MAX_ACCELERATION : Float = 3.0f
+
+    const val MAX_SHAKES : Double = 3.0
+
+    const val MAX_EVENTS : Int = 100
 }

@@ -53,7 +53,7 @@ class UploadLineDialog : AppCompatDialogFragment() {
             .setTitle("Upload drawing")
             .setNegativeButton("cancel", object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    dialog?.dismiss()
+                    dialogListener.exitDialog(dialog)
                 }
             })
             .setPositiveButton("Upload", object: DialogInterface.OnClickListener {
@@ -77,5 +77,6 @@ class UploadLineDialog : AppCompatDialogFragment() {
 
     interface UploadLineDialogListener {
         fun uploadGpsMap(gpsMap : GpsMap?)
+        fun exitDialog(dialog : DialogInterface?)
     }
 }

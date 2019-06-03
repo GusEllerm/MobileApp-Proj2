@@ -52,4 +52,12 @@
     <string name="toast_line_created">Lijn %d is gemaakt.</string>
     <string name="toast_line_edit">Bewerk lijn: %d</string>
     <string name="toast_fragment_selected">%d is geselecteerd.</string>
+    <string name="color_prefrence">BLUE</string>
+    <string name="drawing_activity">Tekening</string>
+    <string name="drawing_settings_activity">Tekening Opties</string>
+    <string name="hello_blank_fragment">Hoi blank fragment</string>
+    <string name="main_menu_activity">Maptionary</string>
+    <string name="toast_deleting_editing_line">Je kan niet de lijn verwijderen die in bewerking is.</string>
+    <string name="channel_name">notification_channel</string>
+    <string name="channel_description">Kanaal voor meldingen</string>
 </resources>
